@@ -1,6 +1,6 @@
 [project]
 name = "authoringfw"
-version = "0.2.0"
+version = "0.3.0"
 description = "Authoring Framework — domain schemas for AI-assisted creative writing applications"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -53,7 +53,7 @@ packages = ["src/authoringfw"]
 
 [tool.pytest.ini_options]
 python_files = ["test_*.py"]
-pythonpath = ["."]
+pythonpath = ["src"]
 testpaths = ["tests"]
 
 [tool.ruff]

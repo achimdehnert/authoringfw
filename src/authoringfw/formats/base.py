@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from pydantic import BaseModel, Field
+
+if TYPE_CHECKING:
+    from authoringfw.planning import PlanningFieldConfig
 
 
 class WorkflowPhase(str, Enum):
@@ -43,8 +46,19 @@ class FormatProfile(BaseModel):
     style_constraints: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
+    model_config = {"arbitrary_types_allowed": True}
+
     def steps_for_phase(self, phase: WorkflowPhase) -> list[StepConfig]:
         return [s for s in self.steps if s.phase == phase]
+
+    @property
+    def planning_fields(self) -> "PlanningFieldConfig":
+        """Return the PlanningFieldConfig for this format.
+
+        Lazy import to avoid circular dependency.
+        """
+        from authoringfw.planning import get_planning_config
+        return get_planning_config(self.format_type)
 
 
 ROMAN = FormatProfile(
@@ -73,6 +87,20 @@ SCIENTIFIC = FormatProfile(
     display_name="Scientific Paper",
     description="Academic writing with citations, methodology, and structured sections.",
     style_constraints=["Objective tone", "Precise terminology", "Citation required"],
+)
+
+NONFICTION = FormatProfile(
+    format_type="nonfiction",
+    display_name="Non-Fiction",
+    description="Informational or instructional book for a general or specialist audience.",
+    style_constraints=["Clear structure", "Evidence-based", "Reader-focused"],
+)
+
+ACADEMIC = FormatProfile(
+    format_type="academic",
+    display_name="Academic Monograph",
+    description="Scholarly long-form work (monograph, dissertation, Habilitation).",
+    style_constraints=["Objective tone", "Citation required", "Structured argumentation"],
 )
 
 SCREENPLAY = FormatProfile(
@@ -105,9 +133,12 @@ PODCAST_SCRIPT = FormatProfile(
 
 FORMAT_REGISTRY: dict[str, FormatProfile] = {
     "roman": ROMAN,
+    "novel": ROMAN,
     "essay": ESSAY,
     "serie": SERIE,
     "scientific": SCIENTIFIC,
+    "nonfiction": NONFICTION,
+    "academic": ACADEMIC,
     "screenplay": SCREENPLAY,
     "short_story": SHORT_STORY,
     "blog_post": BLOG_POST,
@@ -116,7 +147,8 @@ FORMAT_REGISTRY: dict[str, FormatProfile] = {
 
 
 def get_format(format_type: str) -> FormatProfile:
-    """Get a built-in format profile by type string."""
-    if format_type not in FORMAT_REGISTRY:
-        raise KeyError(f"Unknown format type '{format_type}'. Available: {list(FORMAT_REGISTRY)}")
-    return FORMAT_REGISTRY[format_type]
+    """Get a built-in format profile by type string.
+
+    Falls back gracefully for unknown types — returns ROMAN profile.
+    """
+    return FORMAT_REGISTRY.get(format_type, ROMAN)
