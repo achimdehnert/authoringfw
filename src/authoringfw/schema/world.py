@@ -40,3 +40,21 @@ class WorldContext(BaseModel):
         if self.world_rules:
             lines.append("Rules: " + "; ".join(self.world_rules))
         return "\n".join(lines)
+
+    def to_yaml(self) -> str:
+        """Serialize to YAML string."""
+        try:
+            import yaml
+        except ImportError as e:
+            raise ImportError("pyyaml is required. Install with: pip install pyyaml") from e
+        return yaml.dump(self.model_dump(), allow_unicode=True, default_flow_style=False)
+
+    @classmethod
+    def from_yaml(cls, yaml_str: str) -> "WorldContext":
+        """Deserialize from YAML string."""
+        try:
+            import yaml
+        except ImportError as e:
+            raise ImportError("pyyaml is required. Install with: pip install pyyaml") from e
+        data = yaml.safe_load(yaml_str)
+        return cls(**data)

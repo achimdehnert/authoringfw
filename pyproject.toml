@@ -1,6 +1,6 @@
 [project]
 name = "authoringfw"
-version = "0.1.0"
+version = "0.2.0"
 description = "Authoring Framework — domain schemas for AI-assisted creative writing applications"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -25,6 +25,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+yaml = [
+    "pyyaml>=6.0",
+]
+all = [
+    "pyyaml>=6.0",
+]
 dev = [
     "pytest>=8.0",
     "pytest-mock>=3.12",

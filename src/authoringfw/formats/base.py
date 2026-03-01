@@ -75,11 +75,43 @@ SCIENTIFIC = FormatProfile(
     style_constraints=["Objective tone", "Precise terminology", "Citation required"],
 )
 
+SCREENPLAY = FormatProfile(
+    format_type="screenplay",
+    display_name="Screenplay",
+    description="Film or TV script with scene headings, action lines, and dialogue.",
+    style_constraints=["INT./EXT. scene headings", "Present tense", "Show don't tell", "Dialogue-driven"],
+)
+
+SHORT_STORY = FormatProfile(
+    format_type="short_story",
+    display_name="Short Story",
+    description="Compact fiction up to ~10,000 words with single narrative arc.",
+    style_constraints=["Single POV", "Tight focus", "Strong opening hook", "Resonant ending"],
+)
+
+BLOG_POST = FormatProfile(
+    format_type="blog_post",
+    display_name="Blog Post",
+    description="Informative or opinion web article with SEO-friendly structure.",
+    style_constraints=["Conversational tone", "H2/H3 headings", "Short paragraphs", "Call to action"],
+)
+
+PODCAST_SCRIPT = FormatProfile(
+    format_type="podcast_script",
+    display_name="Podcast Script",
+    description="Spoken-word audio script with host/guest dialogue and show notes.",
+    style_constraints=["Spoken language", "No complex punctuation", "Natural transitions", "Listener-friendly summaries"],
+)
+
 FORMAT_REGISTRY: dict[str, FormatProfile] = {
     "roman": ROMAN,
     "essay": ESSAY,
     "serie": SERIE,
     "scientific": SCIENTIFIC,
+    "screenplay": SCREENPLAY,
+    "short_story": SHORT_STORY,
+    "blog_post": BLOG_POST,
+    "podcast_script": PODCAST_SCRIPT,
 }
 
 
