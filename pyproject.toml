@@ -1,7 +1,7 @@
 [project]
 name = "iil-authoringfw"
-version = "0.3.0"
-description = "Authoring Framework — domain schemas for AI-assisted creative writing applications"
+version = "0.4.0"
+description = "Authoring Framework — domain schemas and orchestration base for AI-assisted creative writing"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
@@ -25,19 +25,25 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+aifw = [
+    "iil-aifw>=0.6.0",
+]
 yaml = [
     "pyyaml>=6.0",
 ]
 all = [
     "pyyaml>=6.0",
+    "iil-aifw>=0.6.0",
 ]
 dev = [
     "pytest>=8.0",
     "pytest-mock>=3.12",
+    "pytest-asyncio>=0.23",
 ]
 testing = [
     "pytest>=8.0",
     "pytest-mock>=3.12",
+    "pytest-asyncio>=0.23",
 ]
 
 [project.urls]
@@ -55,6 +61,7 @@ packages = ["src/authoringfw"]
 python_files = ["test_*.py"]
 pythonpath = ["src"]
 testpaths = ["tests"]
+asyncio_mode = "auto"
 
 [tool.ruff]
 line-length = 100
