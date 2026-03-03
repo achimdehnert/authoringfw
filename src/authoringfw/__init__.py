@@ -6,12 +6,22 @@ Domain schemas and orchestration base for AI-assisted creative writing.
 New in 0.4.0: BaseContentOrchestrator, ContentTask, ContentResult,
 OrchestrationError, ConfigurationError (ADR-096 Phase 3).
 
-New in 0.4.1: writing/ sub-domain — ChapterOrchestrator, SummaryOrchestrator,
-ChapterTask, ChapterResult, SummaryTask, SummaryResult.
+New in 0.4.1: writing/ sub-domain — ChapterOrchestrator, SummaryOrchestrator.
+
+New in 0.5.0: research/ sub-domain — ResearchOrchestrator.
+              analysis/ sub-domain — StyleAnalysisOrchestrator, PlotAnalysisOrchestrator.
+              Full ADR-096 §4.5 Research → Writing pipeline supported.
+              demo/ui.html — standalone browser-based prompt builder & pipeline tester.
 """
 
-__version__ = "0.4.1"
+__version__ = "0.5.0"
 
+from authoringfw.analysis import (
+    AnalysisResult,
+    AnalysisTask,
+    PlotAnalysisOrchestrator,
+    StyleAnalysisOrchestrator,
+)
 from authoringfw.base import BaseContentOrchestrator
 from authoringfw.consistency import ConsistencyChecker, ConsistencyIssue, ConsistencyReport
 from authoringfw.exceptions import (
@@ -22,6 +32,7 @@ from authoringfw.exceptions import (
 )
 from authoringfw.formats.base import FormatProfile, WorkflowPhase, get_format
 from authoringfw.planning import PlanningFieldConfig, get_planning_config
+from authoringfw.research import ResearchOrchestrator, ResearchResult, ResearchTask
 from authoringfw.schema.character import CharacterProfile
 from authoringfw.schema.style import StyleProfile
 from authoringfw.schema.versioning import ChangeType, PhaseSnapshot, VersionMetadata
@@ -48,6 +59,15 @@ __all__ = [
     "SummaryOrchestrator",
     "SummaryTask",
     "SummaryResult",
+    # Research sub-domain
+    "ResearchOrchestrator",
+    "ResearchTask",
+    "ResearchResult",
+    # Analysis sub-domain
+    "StyleAnalysisOrchestrator",
+    "PlotAnalysisOrchestrator",
+    "AnalysisTask",
+    "AnalysisResult",
     # Exceptions
     "AuthoringFWError",
     "OrchestrationError",
