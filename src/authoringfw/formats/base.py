@@ -149,6 +149,7 @@ FORMAT_REGISTRY: dict[str, FormatProfile] = {
 def get_format(format_type: str) -> FormatProfile:
     """Get a built-in format profile by type string.
 
-    Falls back gracefully for unknown types — returns ROMAN profile.
+    Raises:
+        KeyError: If format_type is not registered in FORMAT_REGISTRY.
     """
-    return FORMAT_REGISTRY.get(format_type, ROMAN)
+    return FORMAT_REGISTRY[format_type]
