@@ -116,7 +116,7 @@ class TestFormatProfilePlanningFieldsProperty:
         fields = fmt.planning_fields
         assert fields.show_field_of_study is True
 
-    def test_unknown_format_fallback(self):
-        fmt = get_format("unknown_xyz")
-        fields = fmt.planning_fields
-        assert isinstance(fields, PlanningFieldConfig)
+    def test_unknown_format_raises_key_error(self):
+        """get_format() raises KeyError for unknown format keys (no silent fallback)."""
+        with pytest.raises(KeyError):
+            get_format("unknown_xyz")

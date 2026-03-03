@@ -249,27 +249,18 @@ async def test_should_call_aifw_async_completion():
         captured.update(kwargs)
         return _make_llm_result()
 
-    with patch(
-        "authoringfw.base.aifw_async_completion",
-        side_effect=_fake_completion,
-        create=True,
-    ):
-        with patch(
-            "authoringfw.base.completion",
-            new=_fake_completion,
-            create=True,
-        ):
-            # Patch the import inside _call_llm_async
-            import sys
-            fake_aifw = MagicMock()
-            fake_aifw.service.completion = _fake_completion
-            with patch.dict(sys.modules, {"aifw": fake_aifw, "aifw.service": fake_aifw.service}):
-                result = await orch._call_llm_async(
-                    [{"role": "user", "content": "x"}],
-                    config,
-                    quality_level=6,
-                    task=task,
-                )
+    import sys
+    fake_aifw_service = MagicMock()
+    fake_aifw_service.completion = _fake_completion
+    fake_aifw = MagicMock()
+    fake_aifw.service = fake_aifw_service
+    with patch.dict(sys.modules, {"aifw": fake_aifw, "aifw.service": fake_aifw_service}):
+        result = await orch._call_llm_async(
+            [{"role": "user", "content": "x"}],
+            config,
+            quality_level=6,
+            task=task,
+        )
 
     assert result is not None
 
@@ -281,26 +272,17 @@ async def test_should_pass_quality_level_and_priority_to_async_llm():
     task = _make_task(quality_level=8, priority="quality")
     captured = {}
 
-    async def _fake_aifw_completion(**kwargs):
-        captured.update(kwargs)
+    async def _fake_llm_async(msgs, cfg, quality_level, task):
+        captured["quality_level"] = quality_level
+        captured["priority"] = task.priority
         return _make_llm_result()
 
     with patch.object(orch, "_get_action_config", return_value={}):
-        with patch.object(
-            orch,
-            "_call_llm_async",
-            new=AsyncMock(wraps=lambda msgs, cfg, ql, t: _fake_aifw_completion(
-                action_code=t.action_code,
-                messages=msgs,
-                quality_level=ql,
-                priority=t.priority,
-            )),
-        ):
+        with patch.object(orch, "_call_llm_async", side_effect=_fake_llm_async):
             await orch.async_execute(task)
 
-    # The wrapper captures the right values
-    assert task.quality_level == 8
-    assert task.priority == "quality"
+    assert captured["quality_level"] == 8
+    assert captured["priority"] == "quality"
 
 
 # ── Parity with execute() ────────────────────────────────────────────────────────────

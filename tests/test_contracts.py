@@ -4,6 +4,9 @@ Verifies:
   - LLMResult has all fields that authoringfw._map_result() accesses (G-097-04)
   - prompt_template_key fallback to action_code is correct (M-095-02)
   - ConfigurationError from aifw import failure propagates correctly
+
+Note: tests requiring aifw use pytest.importorskip() — they are skipped
+when aifw is not installed (e.g. in CI with only [dev] extras).
 """
 import pytest
 from unittest.mock import MagicMock, patch
@@ -17,7 +20,8 @@ from authoringfw.types import ContentResult, ContentTask
 
 def test_should_verify_llm_result_has_required_fields():
     """G-097-04: LLMResult must expose all fields _map_result() accesses."""
-    from aifw.schema import LLMResult
+    aifw_schema = pytest.importorskip("aifw.schema", reason="aifw not installed")
+    LLMResult = aifw_schema.LLMResult
 
     result = LLMResult(
         success=True,
@@ -28,7 +32,6 @@ def test_should_verify_llm_result_has_required_fields():
         latency_ms=300,
     )
 
-    # All fields authoringfw._map_result() must access
     assert hasattr(result, "content")
     assert hasattr(result, "model")
     assert hasattr(result, "input_tokens")
@@ -40,7 +43,8 @@ def test_should_verify_llm_result_has_required_fields():
 
 def test_should_verify_llm_result_field_types():
     """G-097-04: LLMResult field types match what authoringfw expects."""
-    from aifw.schema import LLMResult
+    aifw_schema = pytest.importorskip("aifw.schema", reason="aifw not installed")
+    LLMResult = aifw_schema.LLMResult
 
     result = LLMResult(success=True, content="ok", model="gpt-4o",
                        input_tokens=10, output_tokens=5, latency_ms=200)
@@ -69,7 +73,6 @@ def test_should_use_action_code_as_fallback_when_prompt_template_key_is_none():
     orch = TrackingOrchestrator()
     task = ContentTask(action_code="story_writing")
 
-    # Simulate config with no prompt_template_key
     config = {"prompt_template_key": None, "action_code": "story_writing"}
 
     with patch.object(orch, "_get_action_config", return_value=config):
@@ -107,7 +110,6 @@ def test_should_use_prompt_template_key_when_set():
         )):
             orch.execute(task)
 
-    # Default: _get_prompt_template_key returns action_code
     assert received_keys == ["chapter_writing"]
 
 
@@ -124,7 +126,6 @@ def test_should_raise_configuration_error_when_aifw_not_installed():
     orch = SimpleOrchestrator()
     task = ContentTask(action_code="test")
 
-    # Simulate aifw not installed
     with patch.object(orch, "_get_action_config",
                       side_effect=ConfigurationError("aifw not installed")):
         with pytest.raises(ConfigurationError, match="aifw not installed"):
@@ -135,10 +136,10 @@ def test_should_raise_configuration_error_when_aifw_not_installed():
 
 def test_should_not_access_quality_level_on_llm_result():
     """I-096-02: LLMResult has no quality_level attr — must not be accessed."""
-    from aifw.schema import LLMResult
+    aifw_schema = pytest.importorskip("aifw.schema", reason="aifw not installed")
+    LLMResult = aifw_schema.LLMResult
 
     result = LLMResult(success=True, content="ok")
-    # LLMResult must NOT have quality_level — that would be the bug
     assert not hasattr(result, "quality_level"), (
         "LLMResult must not have quality_level — "
         "authoringfw must receive it as explicit param (I-096-02)"
