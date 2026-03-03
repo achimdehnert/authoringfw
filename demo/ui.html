@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>authoringfw — UI Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: { 50: '#f8f7f4', 100: '#ede9e0', 600: '#6b5e4e', 800: '#3d2f22', 900: '#1e150a' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .font-lora { font-family: 'Lora', serif; }
+    .tab-active { @apply border-b-2 border-amber-600 text-amber-700 font-semibold; }
+    .tab-inactive { @apply border-b-2 border-transparent text-gray-500 hover:text-gray-700; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+  </style>
+</head>
+<body class="bg-ink-50 min-h-screen">
+
+<!-- Header -->
+<header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4">
+  <div class="w-8 h-8 bg-amber-600 rounded flex items-center justify-center">
+    <span class="text-white text-sm font-bold">A</span>
+  </div>
+  <div>
+    <h1 class="font-lora text-xl font-semibold text-ink-900">authoringfw</h1>
+    <p class="text-xs text-gray-400">UI Demo — v0.4.1 — Prompt Builder &amp; Pipeline Tester</p>
+  </div>
+  <div class="ml-auto flex items-center gap-2">
+    <span class="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded">No AI key required</span>
+    <span class="text-xs bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded">Client-side only</span>
+  </div>
+</header>
+
+<div class="max-w-6xl mx-auto p-6">
+
+  <!-- Tabs -->
+  <div class="flex gap-6 border-b border-gray-200 mb-6">
+    <button onclick="showTab('chapter')" id="tab-chapter" class="pb-3 px-1 text-sm transition-colors tab-active">Chapter Writing</button>
+    <button onclick="showTab('summary')" id="tab-summary" class="pb-3 px-1 text-sm transition-colors tab-inactive">Summary</button>
+    <button onclick="showTab('research')" id="tab-research" class="pb-3 px-1 text-sm transition-colors tab-inactive">Research</button>
+    <button onclick="showTab('analysis')" id="tab-analysis" class="pb-3 px-1 text-sm transition-colors tab-inactive">Analysis</button>
+    <button onclick="showTab('pipeline')" id="tab-pipeline" class="pb-3 px-1 text-sm transition-colors tab-inactive">Pipeline</button>
+  </div>
+
+  <!-- CHAPTER TAB -->
+  <div id="panel-chapter" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="space-y-4">
+      <h2 class="font-lora text-lg font-semibold text-ink-800">ChapterTask</h2>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Chapter Title *</label>
+        <input id="ch-title" type="text" value="Der erste Schritt" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Chapter Outline (Beat Sheet) *</label>
+        <textarea id="ch-outline" rows="4" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">Protagonist betritt die Stadt. Trifft eine mysteriöse Frau. Sie deutet auf ein Geheimnis hin. Held zieht weiter, verunsichert.</textarea>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Previous Chapter Summary</label>
+        <textarea id="ch-prev" rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">In Kapitel 1 verließ der Held sein Dorf und begab sich auf die Reise.</textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Style Notes</label>
+          <input id="ch-style" type="text" value="3. Person, Präteritum, atmosphärisch" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Target Word Count</label>
+          <input id="ch-words" type="number" value="2000" min="100" max="20000" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Quality Level (1-9)</label>
+          <input id="ch-ql" type="number" value="" min="1" max="9" placeholder="tenant default" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Priority</label>
+          <select id="ch-priority" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <option value="">action default</option>
+            <option value="fast">fast</option>
+            <option value="balanced">balanced</option>
+            <option value="quality">quality</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">World Context</label>
+        <textarea id="ch-world" rows="2" placeholder="Optional: world notes injected into system prompt" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"></textarea>
+      </div>
+      <button onclick="buildChapterPrompt()" class="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
+        Build Prompt Messages
+      </button>
+    </div>
+    <div>
+      <h2 class="font-lora text-lg font-semibold text-ink-800 mb-4">Generated Messages</h2>
+      <div id="ch-output" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- SUMMARY TAB -->
+  <div id="panel-summary" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="space-y-4">
+      <h2 class="font-lora text-lg font-semibold text-ink-800">SummaryTask</h2>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Source Text *</label>
+        <textarea id="sm-text" rows="8" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">Die Stadt lag im Morgendunst, als der Held durch das Tor schritt. Er hatte viele Wochen gereist und seine Stiefel erzählten von den Wegen, die er zurückgelegt hatte. Eine Frau im roten Umhang beobachtete ihn vom Marktstand aus...</textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Style</label>
+          <select id="sm-style" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <option value="brief">brief (1-3 Sätze)</option>
+            <option value="detailed">detailed</option>
+            <option value="narrative">narrative</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Max Words</label>
+          <input id="sm-words" type="number" value="100" min="30" max="1000" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+        </div>
+      </div>
+      <button onclick="buildSummaryPrompt()" class="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
+        Build Prompt Messages
+      </button>
+    </div>
+    <div>
+      <h2 class="font-lora text-lg font-semibold text-ink-800 mb-4">Generated Messages</h2>
+      <div id="sm-output" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- RESEARCH TAB -->
+  <div id="panel-research" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="space-y-4">
+      <h2 class="font-lora text-lg font-semibold text-ink-800">ResearchTask</h2>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Topic *</label>
+        <input id="rs-topic" type="text" value="Mittelalterliche Burgarchitektur" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Context (optional)</label>
+        <textarea id="rs-context" rows="3" placeholder="Existing world notes..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"></textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Output Format</label>
+          <select id="rs-format" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <option value="structured">structured (sections)</option>
+            <option value="bullets">bullets</option>
+            <option value="prose">prose</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Max Words</label>
+          <input id="rs-words" type="number" value="500" min="50" max="3000" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+        </div>
+      </div>
+      <button onclick="buildResearchPrompt()" class="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
+        Build Prompt Messages
+      </button>
+    </div>
+    <div>
+      <h2 class="font-lora text-lg font-semibold text-ink-800 mb-4">Generated Messages</h2>
+      <div id="rs-output" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- ANALYSIS TAB -->
+  <div id="panel-analysis" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="space-y-4">
+      <h2 class="font-lora text-lg font-semibold text-ink-800">AnalysisTask</h2>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Analyser</label>
+        <select id="an-type" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+          <option value="style">StyleAnalysisOrchestrator (style_analysis)</option>
+          <option value="plot">PlotAnalysisOrchestrator (plot_analysis)</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Source Text *</label>
+        <textarea id="an-text" rows="6" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">Die Stadt lag im Morgendunst. Der Held schritt durch das Tor, müde und voller Hoffnung zugleich. Er hatte keine Ahnung, was ihn erwartete, aber er wusste, dass es kein Zurück mehr gab.</textarea>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Analysis Focus</label>
+          <input id="an-focus" type="text" placeholder="e.g. pacing, dialogue" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-600 mb-1">Output Format</label>
+          <select id="an-format" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+            <option value="structured">structured</option>
+            <option value="score">score (0.0-1.0)</option>
+            <option value="prose">prose</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="buildAnalysisPrompt()" class="w-full bg-amber-600 hover:bg-amber-700 text-white rounded-lg px-4 py-2.5 text-sm font-medium transition-colors">
+        Build Prompt Messages
+      </button>
+    </div>
+    <div>
+      <h2 class="font-lora text-lg font-semibold text-ink-800 mb-4">Generated Messages</h2>
+      <div id="an-output" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- PIPELINE TAB -->
+  <div id="panel-pipeline" class="hidden">
+    <h2 class="font-lora text-lg font-semibold text-ink-800 mb-4">Research → Writing Pipeline (ADR-096 §4.5)</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="w-6 h-6 bg-blue-100 text-blue-700 rounded-full text-xs flex items-center justify-center font-bold">1</span>
+          <span class="text-sm font-medium text-gray-700">ResearchOrchestrator</span>
+        </div>
+        <input id="pl-topic" type="text" value="Viktorianisches London, Nebel, Gaslampen" placeholder="Research topic" class="w-full border border-gray-200 rounded px-2 py-1.5 text-xs mb-2">
+        <select id="pl-fmt" class="w-full border border-gray-200 rounded px-2 py-1.5 text-xs">
+          <option value="structured">structured</option>
+          <option value="bullets">bullets</option>
+        </select>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="w-6 h-6 bg-amber-100 text-amber-700 rounded-full text-xs flex items-center justify-center font-bold">2</span>
+          <span class="text-sm font-medium text-gray-700">ChapterOrchestrator</span>
+        </div>
+        <input id="pl-title" type="text" value="Durch den Nebel" placeholder="Chapter title" class="w-full border border-gray-200 rounded px-2 py-1.5 text-xs mb-2">
+        <textarea id="pl-outline" rows="3" placeholder="Chapter outline" class="w-full border border-gray-200 rounded px-2 py-1.5 text-xs">Held geht durch nebeliges London. Sieht verdächtige Gestalt. Folgt ihr in dunkle Gasse.</textarea>
+      </div>
+      <div class="bg-white border border-gray-200 rounded-lg p-4">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="w-6 h-6 bg-green-100 text-green-700 rounded-full text-xs flex items-center justify-center font-bold">3</span>
+          <span class="text-sm font-medium text-gray-700">SummaryOrchestrator</span>
+        </div>
+        <p class="text-xs text-gray-400">Auto-runs after chapter to generate previous_summary for next chapter.</p>
+        <select id="pl-sm-style" class="w-full border border-gray-200 rounded px-2 py-1.5 text-xs mt-2">
+          <option value="brief">brief</option>
+          <option value="narrative">narrative</option>
+        </select>
+      </div>
+    </div>
+    <button onclick="buildPipeline()" class="bg-amber-600 hover:bg-amber-700 text-white rounded-lg px-6 py-2.5 text-sm font-medium transition-colors mb-6">
+      Build All Pipeline Messages
+    </button>
+    <div id="pl-output" class="space-y-4"></div>
+  </div>
+
+</div>
+
+<script>
+// ── Tab logic ──────────────────────────────────────────────────────────────
+const TABS = ['chapter', 'summary', 'research', 'analysis', 'pipeline'];
+
+function showTab(name) {
+  TABS.forEach(t => {
+    document.getElementById('panel-' + t).classList.toggle('hidden', t !== name);
+    const tab = document.getElementById('tab-' + t);
+    tab.classList.toggle('tab-active', t === name);
+    tab.classList.toggle('tab-inactive', t !== name);
+  });
+}
+
+// ── Render helpers ────────────────────────────────────────────────────────
+function renderMessages(targetId, messages, taskJson) {
+  const el = document.getElementById(targetId);
+  el.innerHTML = '';
+
+  // Task JSON card
+  const taskCard = document.createElement('div');
+  taskCard.className = 'bg-white border border-gray-200 rounded-lg p-4';
+  taskCard.innerHTML = `
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Task (JSON)</span>
+      <button onclick="copyText(this)" data-text='${escapeAttr(JSON.stringify(taskJson, null, 2))}'
+        class="text-xs text-amber-600 hover:text-amber-800">Copy</button>
+    </div>
+    <pre class="text-xs text-gray-600 bg-gray-50 rounded p-2 max-h-32 overflow-auto">${escapeHtml(JSON.stringify(taskJson, null, 2))}</pre>
+  `;
+  el.appendChild(taskCard);
+
+  messages.forEach((msg, i) => {
+    const roleColor = msg.role === 'system'
+      ? 'bg-blue-50 border-blue-200 text-blue-800'
+      : 'bg-amber-50 border-amber-200 text-amber-800';
+    const card = document.createElement('div');
+    card.className = `bg-white border border-gray-200 rounded-lg p-4`;
+    card.innerHTML = `
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold px-2 py-0.5 rounded ${roleColor}">${msg.role}</span>
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-gray-400">${msg.content.length} chars · ~${Math.round(msg.content.split(/\s+/).length)} words</span>
+          <button onclick="copyText(this)" data-text='${escapeAttr(msg.content)}'
+            class="text-xs text-amber-600 hover:text-amber-800">Copy</button>
+        </div>
+      </div>
+      <pre class="text-xs text-gray-700 leading-relaxed max-h-48 overflow-auto">${escapeHtml(msg.content)}</pre>
+    `;
+    el.appendChild(card);
+  });
+}
+
+function renderPipelineStep(targetId, step, label, messages, taskJson) {
+  const el = document.getElementById(targetId);
+  const wrap = document.createElement('div');
+  wrap.className = 'bg-white border border-gray-200 rounded-lg overflow-hidden';
+  wrap.innerHTML = `
+    <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 flex items-center gap-2">
+      <span class="text-sm font-semibold text-gray-700">${label}</span>
+      <span class="text-xs text-gray-400">${messages.length} message(s)</span>
+    </div>
+    <div class="p-4 space-y-3">
+      ${messages.map(m => `
+        <div>
+          <span class="text-xs font-semibold ${m.role === 'system' ? 'text-blue-600' : 'text-amber-600'} uppercase">${m.role}</span>
+          <pre class="text-xs text-gray-600 mt-1 max-h-40 overflow-auto">${escapeHtml(m.content)}</pre>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  el.appendChild(wrap);
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escapeAttr(str) {
+  return str.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+}
+function copyText(btn) {
+  navigator.clipboard.writeText(btn.dataset.text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+// ── Chapter prompt builder ────────────────────────────────────────────────
+function buildChapterPrompt() {
+  const title = document.getElementById('ch-title').value.trim();
+  const outline = document.getElementById('ch-outline').value.trim();
+  const prev = document.getElementById('ch-prev').value.trim();
+  const style = document.getElementById('ch-style').value.trim();
+  const words = parseInt(document.getElementById('ch-words').value) || 2000;
+  const ql = document.getElementById('ch-ql').value;
+  const priority = document.getElementById('ch-priority').value;
+  const world = document.getElementById('ch-world').value.trim();
+
+  if (!title || !outline) {
+    alert('Chapter Title and Outline are required.');
+    return;
+  }
+
+  const task = {
+    action_code: 'chapter_writing',
+    chapter_title: title,
+    chapter_outline: outline,
+    previous_summary: prev || undefined,
+    style_notes: style || undefined,
+    target_word_count: words,
+    world_context: world || undefined,
+    quality_level: ql ? parseInt(ql) : undefined,
+    priority: priority || undefined,
+  };
+
+  // Mirror Python _build_messages logic
+  const systemParts = ['Du bist ein professioneller Autor. Schreibe den folgenden Buchkapitel als fortlaufenden Prosa-Text.'];
+  if (style) systemParts.push(`Stil-Vorgaben: ${style}`);
+  if (world) systemParts.push(`Welt-Kontext:\n${world}`);
+
+  const userParts = [`# Kapitel: ${title}`];
+  if (prev) userParts.push(`**Vorheriges Kapitel (Zusammenfassung):**\n${prev}`);
+  userParts.push(`**Outline / Beat Sheet:**\n${outline}`);
+  userParts.push(`Schreibe ca. ${words} Wörter. Beginne direkt mit dem Kapiteltext, ohne Titel-Wiederholung.`);
+
+  const messages = [
+    { role: 'system', content: systemParts.join('\n\n') },
+    { role: 'user', content: userParts.join('\n\n') },
+  ];
+
+  renderMessages('ch-output', messages, task);
+}
+
+// ── Summary prompt builder ────────────────────────────────────────────────
+function buildSummaryPrompt() {
+  const text = document.getElementById('sm-text').value.trim();
+  const style = document.getElementById('sm-style').value;
+  const words = parseInt(document.getElementById('sm-words').value) || 100;
+
+  if (!text) { alert('Source text is required.'); return; }
+
+  const styles = {
+    brief: 'Fasse den Text in 1-3 Sätzen zusammen. Nur die wichtigsten Ereignisse.',
+    detailed: 'Schreibe eine detaillierte Zusammenfassung mit allen wichtigen Ereignissen, Charakterentwicklungen und Wendepunkten.',
+    narrative: 'Schreibe eine narrative Zusammenfassung im Stil eines Rückblicks. Bewahre die Atmosphäre und den Ton des Originals.',
+  };
+
+  const task = { action_code: 'summary_writing', source_text: text.substring(0, 80) + '...', summary_style: style, max_words: words };
+  const system = `Du bist ein Assistent für Buchautoren. ${styles[style]} Maximal ${words} Wörter. Antworte nur mit der Zusammenfassung, ohne Einleitung oder Erklärung.`;
+  const messages = [
+    { role: 'system', content: system },
+    { role: 'user', content: text.substring(0, 12000) },
+  ];
+  renderMessages('sm-output', messages, task);
+}
+
+// ── Research prompt builder ───────────────────────────────────────────────
+function buildResearchPrompt() {
+  const topic = document.getElementById('rs-topic').value.trim();
+  const context = document.getElementById('rs-context').value.trim();
+  const fmt = document.getElementById('rs-format').value;
+  const words = parseInt(document.getElementById('rs-words').value) || 500;
+
+  if (!topic) { alert('Topic is required.'); return; }
+
+  const fmtInstructions = {
+    structured: 'Antworte in klar gegliederten Abschnitten mit Überschriften. Jeder Abschnitt hat 2-4 Sätze. Keine Einleitung, kein Fazit.',
+    bullets: 'Antworte als strukturierte Stichpunktliste. Jeder Punkt ist prägnant und eigenständig verständlich.',
+    prose: 'Antworte als fließender Prosa-Text in einem klaren, sachlichen Stil.',
+  };
+
+  const task = { action_code: 'research_query', topic, context: context || undefined, output_format: fmt, max_words: words };
+  const system = `Du bist ein Recherche-Assistent für Buchautoren. ${fmtInstructions[fmt]} Maximal ${words} Wörter. Nur Fakten und Details, die direkt für das Schreiben von Prosa nützlich sind.`;
+  const userParts = [`Recherchiere: ${topic}`];
+  if (context) userParts.push(`Vorhandener Kontext:\n${context}`);
+
+  const messages = [
+    { role: 'system', content: system },
+    { role: 'user', content: userParts.join('\n\n') },
+  ];
+  renderMessages('rs-output', messages, task);
+}
+
+// ── Analysis prompt builder ───────────────────────────────────────────────
+function buildAnalysisPrompt() {
+  const type = document.getElementById('an-type').value;
+  const text = document.getElementById('an-text').value.trim();
+  const focus = document.getElementById('an-focus').value.trim();
+  const fmt = document.getElementById('an-format').value;
+
+  if (!text) { alert('Source text is required.'); return; }
+
+  const actionCode = type === 'style' ? 'style_analysis' : 'plot_analysis';
+  const task = { action_code: actionCode, source_text: text.substring(0, 80) + '...', analysis_focus: focus || undefined, output_format: fmt };
+
+  let systemParts;
+  if (type === 'style') {
+    systemParts = [
+      'Du bist ein Lektor und Stilanalyst. Analysiere den folgenden Text auf:',
+      '- Stilkonsistenz (Ton, POV, Tempus)',
+      '- Sprachliche Qualität (Wortwahl, Satzbau, Rhythmus)',
+      '- Stärken und Verbesserungsvorschläge',
+    ];
+    if (focus) systemParts.push(`Fokus besonders auf: ${focus}`);
+    if (fmt === 'score') systemParts.push('Gib am Ende eine Gesamtbewertung als Dezimalzahl von 0.0 bis 1.0 in der Form: SCORE: 0.75');
+  } else {
+    systemParts = [
+      'Du bist ein Dramaturg und Story-Analyst. Analysiere die Plotstruktur:',
+      '- Spannungskurve und Pacing',
+      '- Charakterentwicklung und Arcs',
+      '- Wendepunkte und dramatische Wirkung',
+      '- Kohärenz und Plausibilität',
+    ];
+    if (focus) systemParts.push(`Fokus: ${focus}`);
+  }
+
+  const messages = [
+    { role: 'system', content: systemParts.join('\n') },
+    { role: 'user', content: text.substring(0, 8000) },
+  ];
+  renderMessages('an-output', messages, task);
+}
+
+// ── Pipeline builder ──────────────────────────────────────────────────────
+function buildPipeline() {
+  const topic = document.getElementById('pl-topic').value.trim();
+  const fmt = document.getElementById('pl-fmt').value;
+  const title = document.getElementById('pl-title').value.trim();
+  const outline = document.getElementById('pl-outline').value.trim();
+  const smStyle = document.getElementById('pl-sm-style').value;
+
+  if (!topic || !title || !outline) { alert('All pipeline fields are required.'); return; }
+
+  const el = document.getElementById('pl-output');
+  el.innerHTML = '';
+
+  const fmtInstr = {
+    structured: 'Antworte in klar gegliederten Abschnitten.',
+    bullets: 'Antworte als Stichpunktliste.',
+  };
+  const smStyles = {
+    brief: 'Fasse in 1-3 Sätzen zusammen.',
+    narrative: 'Schreibe eine narrative Zusammenfassung im Ton des Originals.',
+  };
+
+  const step1 = [
+    { role: 'system', content: `Du bist ein Recherche-Assistent für Buchautoren. ${fmtInstr[fmt]} Maximal 500 Wörter.` },
+    { role: 'user', content: `Recherchiere: ${topic}` },
+  ];
+  const step2 = [
+    { role: 'system', content: `Du bist ein professioneller Autor. Nutze den folgenden Welt-Kontext (aus Recherche zu: ${topic}) und schreibe Kapitel als Prosa.` },
+    { role: 'user', content: `# Kapitel: ${title}\n\n**Outline:**\n${outline}\n\n**Welt-Kontext:**\n[research_result.structured_findings injected here]\n\nSchreibe ca. 2000 Wörter.` },
+  ];
+  const step3 = [
+    { role: 'system', content: `Du bist ein Assistent für Buchautoren. ${smStyles[smStyle]} Maximal 100 Wörter.` },
+    { role: 'user', content: `[chapter_result.content injected here]` },
+  ];
+
+  renderPipelineStep('pl-output', 1, '① ResearchOrchestrator (research_query)', step1, {});
+
+  // Arrow
+  const arrow = document.createElement('div');
+  arrow.className = 'flex items-center justify-center text-gray-400 text-lg py-1';
+  arrow.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg> <span class="text-xs ml-1">structured_findings → world_context</span>';
+  el.appendChild(arrow);
+
+  renderPipelineStep('pl-output', 2, '② ChapterOrchestrator (chapter_writing)', step2, {});
+
+  const arrow2 = document.createElement('div');
+  arrow2.className = 'flex items-center justify-center text-gray-400 text-lg py-1';
+  arrow2.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg> <span class="text-xs ml-1">chapter content → source_text</span>';
+  el.appendChild(arrow2);
+
+  renderPipelineStep('pl-output', 3, '③ SummaryOrchestrator (summary_writing)', step3, {});
+}
+
+// Auto-build on load
+document.addEventListener('DOMContentLoaded', () => buildChapterPrompt());
+</script>
+</body>
+</html>
