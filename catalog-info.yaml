@@ -1,0 +1,18 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: authoringfw
+  description: authoringfw — Content Orchestration Framework for AI-assisted writing pipelines
+  tags: [python, ai, content, orchestration, framework]
+  annotations:
+    github.com/project-slug: achimdehnert/authoringfw
+    pypi/package-name: "authoringfw"
+    pypi/publish-workflow: "publish.yml"
+spec:
+  type: library
+  lifecycle: active
+  owner: achimdehnert
+  system: ai-platform
+  domain: content
+  providesApis: []
+  dependsOn: []
