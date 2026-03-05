@@ -1,0 +1,30 @@
+name: "Task"
+description: "Technische Aufgabe / Refactoring / Chore"
+title: "[TASK] "
+labels: ["task", "triage"]
+body:
+  - type: dropdown
+    id: task_type
+    attributes:
+      label: "Task-Typ"
+      options:
+        - refactoring
+        - dependency-update
+        - ci-cd
+        - documentation
+        - test-coverage
+        - chore
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: "Beschreibung"
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: "Definition of Done"
+    validations:
+      required: true
