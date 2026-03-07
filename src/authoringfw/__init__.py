@@ -12,9 +12,13 @@ New in 0.5.0: research/ sub-domain — ResearchOrchestrator.
               analysis/ sub-domain — StyleAnalysisOrchestrator, PlotAnalysisOrchestrator.
               Full ADR-096 §4.5 Research → Writing pipeline supported.
               demo/ui.html — standalone browser-based prompt builder & pipeline tester.
+
+New in 0.6.2: text/ sub-domain — TextReformatter, ReformatTask, ReformatResult.
+              Generic post-hoc text transformation (no domain coupling).
+              Usable from iil-researchfw, bfagent, or any consumer.
 """
 
-__version__ = "0.5.0"
+__version__ = "0.6.2"
 
 from authoringfw.analysis import (
     AnalysisResult,
@@ -38,6 +42,11 @@ from authoringfw.schema.style import StyleProfile
 from authoringfw.schema.versioning import ChangeType, PhaseSnapshot, VersionMetadata
 from authoringfw.schema.world import WorldContext
 from authoringfw.types import ContentResult, ContentTask
+from authoringfw.text import (
+    ReformatResult,
+    ReformatTask,
+    TextReformatter,
+)
 from authoringfw.writing import (
     ChapterOrchestrator,
     ChapterResult,
@@ -90,5 +99,9 @@ __all__ = [
     "ConsistencyChecker",
     "ConsistencyReport",
     "ConsistencyIssue",
+    # Text sub-domain
+    "TextReformatter",
+    "ReformatTask",
+    "ReformatResult",
     "__version__",
 ]
