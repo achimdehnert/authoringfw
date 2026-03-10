@@ -18,7 +18,7 @@ New in 0.6.2: text/ sub-domain — TextReformatter, ReformatTask, ReformatResult
               Usable from iil-researchfw, bfagent, or any consumer.
 """
 
-__version__ = "0.6.2"
+__version__ = "0.7.0"
 
 from authoringfw.analysis import (
     AnalysisResult,
@@ -37,10 +37,20 @@ from authoringfw.exceptions import (
 from authoringfw.formats.base import FormatProfile, WorkflowPhase, get_format
 from authoringfw.planning import PlanningFieldConfig, get_planning_config
 from authoringfw.research import ResearchOrchestrator, ResearchResult, ResearchTask
+from authoringfw.adapters import (
+    ICharacterAdapter,
+    ILocationAdapter,
+    ISceneAdapter,
+    IStoryAdapter,
+    IStyleAdapter,
+    IWorldAdapter,
+)
 from authoringfw.schema.character import CharacterProfile
+from authoringfw.schema.scene import SceneProfile
+from authoringfw.schema.story import StoryProfile
 from authoringfw.schema.style import StyleProfile
 from authoringfw.schema.versioning import ChangeType, PhaseSnapshot, VersionMetadata
-from authoringfw.schema.world import WorldContext
+from authoringfw.schema.world import Location, WorldContext
 from authoringfw.types import ContentResult, ContentTask
 from authoringfw.text import (
     ReformatResult,
@@ -86,9 +96,19 @@ __all__ = [
     "StyleProfile",
     "CharacterProfile",
     "WorldContext",
+    "Location",
+    "SceneProfile",
+    "StoryProfile",
     "VersionMetadata",
     "ChangeType",
     "PhaseSnapshot",
+    # Adapter interfaces
+    "IWorldAdapter",
+    "ILocationAdapter",
+    "ICharacterAdapter",
+    "IStoryAdapter",
+    "ISceneAdapter",
+    "IStyleAdapter",
     # Formats & planning
     "FormatProfile",
     "WorkflowPhase",

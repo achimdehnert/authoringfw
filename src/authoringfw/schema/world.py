@@ -10,21 +10,41 @@ from pydantic import BaseModel, Field
 class Location(BaseModel):
     """A location within a story world."""
 
+    id: str = ""
     name: str
     description: str = ""
     atmosphere: str = ""
+    location_type: str = ""
+    parent_id: str = ""
+    full_path: str = ""
     metadata: dict[str, Any] = Field(default_factory=dict)
+
+    def to_context_string(self) -> str:
+        """Format location for prompt injection."""
+        lines = [f"Location: {self.name}"]
+        if self.location_type:
+            lines.append(f"Type: {self.location_type}")
+        if self.atmosphere:
+            lines.append(f"Atmosphere: {self.atmosphere}")
+        if self.description:
+            lines.append(self.description)
+        return "\n".join(lines)
 
 
 class WorldContext(BaseModel):
     """The story universe — locations, lore, rules, and time period."""
 
+    id: str = ""
     title: str
     genre: str = ""
     setting: str = ""
     time_period: str = ""
     world_rules: list[str] = Field(default_factory=list)
     locations: list[Location] = Field(default_factory=list)
+    characters: list[str] = Field(
+        default_factory=list,
+        description="Character names or IDs linked to this world",
+    )
     lore: str = ""
     metadata: dict[str, Any] = Field(default_factory=dict)
 
