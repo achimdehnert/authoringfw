@@ -116,6 +116,37 @@ class TestFormatProfilePlanningFieldsProperty:
         fields = fmt.planning_fields
         assert fields.show_field_of_study is True
 
+    def test_screenplay_format_has_planning_fields(self):
+        fmt = get_format("screenplay")
+        fields = fmt.planning_fields
+        assert isinstance(fields, PlanningFieldConfig)
+        assert fields.show_logline is True
+        assert fields.show_audience is True
+        assert fields.word_count_default == 25000
+
+    def test_short_story_format_has_planning_fields(self):
+        fmt = get_format("short_story")
+        fields = fmt.planning_fields
+        assert isinstance(fields, PlanningFieldConfig)
+        assert fields.show_logline is True
+        assert fields.word_count_default == 5000
+
+    def test_blog_post_format_has_planning_fields(self):
+        fmt = get_format("blog_post")
+        fields = fmt.planning_fields
+        assert isinstance(fields, PlanningFieldConfig)
+        assert fields.show_keywords is True
+        assert fields.show_abstract is True
+        assert fields.word_count_default == 1500
+
+    def test_podcast_script_format_has_planning_fields(self):
+        fmt = get_format("podcast_script")
+        fields = fmt.planning_fields
+        assert isinstance(fields, PlanningFieldConfig)
+        assert fields.show_keywords is True
+        assert "Show Notes" in fields.abstract_label
+        assert fields.word_count_default == 3000
+
     def test_unknown_format_raises_key_error(self):
         """get_format() raises KeyError for unknown format keys (no silent fallback)."""
         with pytest.raises(KeyError):

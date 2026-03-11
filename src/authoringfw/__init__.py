@@ -18,7 +18,7 @@ New in 0.6.2: text/ sub-domain — TextReformatter, ReformatTask, ReformatResult
               Usable from iil-researchfw, bfagent, or any consumer.
 """
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 from authoringfw.analysis import (
     AnalysisResult,

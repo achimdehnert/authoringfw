@@ -175,6 +175,90 @@ PLANNING_SERIE = PlanningFieldConfig(
     planning_action_code="planning_roman",
 )
 
+PLANNING_SCREENPLAY = PlanningFieldConfig(
+    premise_label="Konzept / Logline",
+    premise_placeholder=(
+        "Worum geht es in deinem Film/deiner Serie? "
+        "Was ist der zentrale Konflikt?"
+    ),
+    show_themes=True,
+    show_logline=True,
+    logline_label="Logline (1 Satz)",
+    logline_placeholder="Wenn [Protagonist] [Auslöser], muss [er/sie] [Handlung], sonst [Einsatz].",
+    show_abstract=False,
+    show_hypothesis=False,
+    show_keywords=False,
+    show_citation_style=False,
+    show_field_of_study=False,
+    show_audience=True,
+    show_author_style=False,
+    word_count_default=25000,
+    planning_action_code="planning_roman",
+)
+
+PLANNING_SHORT_STORY = PlanningFieldConfig(
+    premise_label="Kernidee",
+    premise_placeholder=(
+        "Was ist die zentrale Idee deiner Kurzgeschichte? "
+        "Welche Emotion oder Erkenntnis soll der Leser mitnehmen?"
+    ),
+    show_themes=True,
+    show_logline=True,
+    logline_label="Logline",
+    logline_placeholder="Eine Kurzgeschichte über [Protagonist], der/die [Konflikt] erlebt.",
+    show_abstract=False,
+    show_hypothesis=False,
+    show_keywords=False,
+    show_citation_style=False,
+    show_field_of_study=False,
+    show_audience=True,
+    show_author_style=True,
+    word_count_default=5000,
+    planning_action_code="planning_roman",
+)
+
+PLANNING_BLOG_POST = PlanningFieldConfig(
+    premise_label="Thema & Kernaussage",
+    premise_placeholder=(
+        "Worüber schreibst du? "
+        "Was ist die wichtigste Erkenntnis für den Leser?"
+    ),
+    show_themes=False,
+    show_logline=False,
+    show_abstract=True,
+    abstract_label="Teaser / Einleitung",
+    abstract_placeholder="Die ersten 2-3 Sätze, die den Leser zum Weiterlesen motivieren.",
+    show_hypothesis=False,
+    show_keywords=True,
+    show_citation_style=False,
+    show_field_of_study=False,
+    show_audience=True,
+    show_author_style=True,
+    word_count_default=1500,
+    planning_action_code="planning_nonfiction",
+)
+
+PLANNING_PODCAST_SCRIPT = PlanningFieldConfig(
+    premise_label="Folgenthema",
+    premise_placeholder=(
+        "Was ist das Thema dieser Episode? "
+        "Welche Frage wird beantwortet?"
+    ),
+    show_themes=False,
+    show_logline=False,
+    show_abstract=True,
+    abstract_label="Show Notes",
+    abstract_placeholder="Stichpunkte für die Episodenbeschreibung und Kapitelmarken.",
+    show_hypothesis=False,
+    show_keywords=True,
+    show_citation_style=False,
+    show_field_of_study=False,
+    show_audience=True,
+    show_author_style=False,
+    word_count_default=3000,
+    planning_action_code="planning_nonfiction",
+)
+
 PLANNING_REGISTRY: dict[str, PlanningFieldConfig] = {
     "roman": PLANNING_ROMAN,
     "novel": PLANNING_ROMAN,
@@ -183,6 +267,10 @@ PLANNING_REGISTRY: dict[str, PlanningFieldConfig] = {
     "scientific": PLANNING_SCIENTIFIC,
     "essay": PLANNING_ESSAY,
     "serie": PLANNING_SERIE,
+    "screenplay": PLANNING_SCREENPLAY,
+    "short_story": PLANNING_SHORT_STORY,
+    "blog_post": PLANNING_BLOG_POST,
+    "podcast_script": PLANNING_PODCAST_SCRIPT,
 }
 
 
