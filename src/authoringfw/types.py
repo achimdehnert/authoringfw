@@ -42,6 +42,10 @@ class ContentTask(BaseModel):
         default=None,
         description="Routing priority: 'fast' | 'balanced' | 'quality'. None = action default.",
     )
+    llm_overrides: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Per-call LLM overrides (max_tokens, model, etc.) forwarded to aifw.",
+    )
     metadata: dict[str, Any] = Field(
         default_factory=dict,
         description="Caller metadata passed through unchanged to ContentResult",

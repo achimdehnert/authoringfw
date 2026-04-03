@@ -20,6 +20,11 @@ Usage::
 """
 
 from authoringfw.writing.chapter import ChapterOrchestrator
+from authoringfw.writing.chunked import (
+    ChunkedChapterOrchestrator,
+    compute_max_tokens,
+    compute_words_per_chunk,
+)
 from authoringfw.writing.summary import SummaryOrchestrator
 from authoringfw.writing.types import (
     ChapterResult,
@@ -30,9 +35,12 @@ from authoringfw.writing.types import (
 
 __all__ = [
     "ChapterOrchestrator",
+    "ChunkedChapterOrchestrator",
     "SummaryOrchestrator",
     "ChapterTask",
     "ChapterResult",
     "SummaryTask",
     "SummaryResult",
+    "compute_max_tokens",
+    "compute_words_per_chunk",
 ]

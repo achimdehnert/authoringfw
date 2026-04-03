@@ -18,7 +18,7 @@ New in 0.6.2: text/ sub-domain — TextReformatter, ReformatTask, ReformatResult
               Usable from iil-researchfw, bfagent, or any consumer.
 """
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 from authoringfw.analysis import (
     AnalysisResult,
@@ -61,9 +61,12 @@ from authoringfw.writing import (
     ChapterOrchestrator,
     ChapterResult,
     ChapterTask,
+    ChunkedChapterOrchestrator,
     SummaryOrchestrator,
     SummaryResult,
     SummaryTask,
+    compute_max_tokens,
+    compute_words_per_chunk,
 )
 
 __all__ = [
@@ -73,11 +76,14 @@ __all__ = [
     "ContentResult",
     # Writing sub-domain
     "ChapterOrchestrator",
+    "ChunkedChapterOrchestrator",
     "ChapterTask",
     "ChapterResult",
     "SummaryOrchestrator",
     "SummaryTask",
     "SummaryResult",
+    "compute_max_tokens",
+    "compute_words_per_chunk",
     # Research sub-domain
     "ResearchOrchestrator",
     "ResearchTask",

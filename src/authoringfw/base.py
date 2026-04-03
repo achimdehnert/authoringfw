@@ -294,6 +294,7 @@ class BaseContentOrchestrator(ABC):
             messages=messages,
             quality_level=quality_level,
             priority=task.priority,
+            **task.llm_overrides,
         )
 
     async def _call_llm_async(
@@ -324,4 +325,5 @@ class BaseContentOrchestrator(ABC):
             messages=messages,
             quality_level=quality_level,
             priority=task.priority,
+            **task.llm_overrides,
         )

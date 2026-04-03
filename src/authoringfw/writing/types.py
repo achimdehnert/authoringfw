@@ -61,6 +61,10 @@ class ChapterTask(BaseModel):
     )
     quality_level: int | None = Field(default=None, ge=1, le=9)
     priority: str | None = Field(default=None)
+    llm_overrides: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Per-call LLM overrides (max_tokens, model, etc.) forwarded to aifw.",
+    )
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -102,6 +106,10 @@ class SummaryTask(BaseModel):
     max_words: int = Field(default=150, ge=30, le=1000)
     quality_level: int | None = Field(default=None, ge=1, le=9)
     priority: str | None = Field(default=None)
+    llm_overrides: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Per-call LLM overrides (max_tokens, model, etc.) forwarded to aifw.",
+    )
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
