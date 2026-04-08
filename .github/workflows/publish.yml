@@ -91,11 +91,10 @@ jobs:
           name: dist-${{ needs.build.outputs.version }}
           path: dist/
 
-      - name: Publish to PyPI
+      - name: Publish to PyPI (Trusted Publishing / OIDC)
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           print-hash: true
-          password: ${{ secrets.PYPI_API_TOKEN }}
           skip-existing: true
 
   publish-testpypi:
