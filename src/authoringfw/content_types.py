@@ -14,16 +14,19 @@ loaded from bundled YAML data files. Any repo can use::
 To add a new content_type: add a YAML file to data/content_types/{name}.yaml
 in the authoringfw package. No Python code changes needed.
 
-New in 0.9.0.
+New in 0.10.0.
 """
 
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
+from functools import lru_cache
 from importlib import resources
 from pathlib import Path
 from typing import Any
+
+import yaml
 
 from .schema.style import StyleProfile
 
@@ -64,14 +67,14 @@ def list_content_types() -> list[str]:
     return sorted(p.stem for p in d.glob("*.yaml"))
 
 
+@lru_cache(maxsize=16)
 def get_content_type_config(content_type: str) -> ContentTypeConfig:
     """
     Load ContentTypeConfig for a content_type from bundled YAML.
 
     Falls back to 'novel' defaults if the content_type is unknown.
+    Results are cached per content_type.
     """
-    import yaml
-
     d = _data_dir()
     yaml_path = d / f"{content_type}.yaml"
     if not yaml_path.exists():
