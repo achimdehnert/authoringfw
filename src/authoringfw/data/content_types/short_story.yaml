@@ -1,0 +1,10 @@
+style:
+  tone: literary
+  pov: third_limited
+  tense: past
+  vocabulary_level: medium
+
+chunk_vocab:
+  opening: einprägsamen Eröffnung
+  mid: Setze die Erzählung fort
+  mid_detail: Führe die Handlung nahtlos weiter

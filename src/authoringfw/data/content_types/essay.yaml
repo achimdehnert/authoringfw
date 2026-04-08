@@ -1,0 +1,10 @@
+style:
+  tone: analytical
+  pov: first_person
+  tense: present
+  vocabulary_level: advanced
+
+chunk_vocab:
+  opening: pointierten Einleitung
+  mid: Setze die Argumentation fort
+  mid_detail: Führe die Gedankenführung nahtlos weiter

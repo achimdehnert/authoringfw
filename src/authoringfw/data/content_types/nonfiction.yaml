@@ -1,0 +1,10 @@
+style:
+  tone: informative
+  pov: omniscient
+  tense: present
+  vocabulary_level: advanced
+
+chunk_vocab:
+  opening: klaren Einleitung
+  mid: Setze die Darstellung fort
+  mid_detail: Führe die Erläuterung nahtlos weiter
