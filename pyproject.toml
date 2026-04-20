@@ -1,6 +1,6 @@
 [project]
 name = "iil-authoringfw"
-version = "0.10.0"
+version = "0.11.0"
 description = "Authoring Framework — domain schemas and orchestration base for AI-assisted creative writing"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -31,9 +31,13 @@ aifw = [
 yaml = [
     "pyyaml>=6.0",
 ]
+promptfw = [
+    "iil-promptfw>=0.5.5",
+]
 all = [
     "pyyaml>=6.0",
     "iil-aifw>=0.6.1",
+    "iil-promptfw>=0.5.5",
 ]
 dev = [
     "pytest>=8.0",

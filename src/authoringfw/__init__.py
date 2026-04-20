@@ -18,7 +18,7 @@ New in 0.6.2: text/ sub-domain — TextReformatter, ReformatTask, ReformatResult
               Usable from iil-researchfw, bfagent, or any consumer.
 """
 
-__version__ = "0.10.0"
+__version__ = "0.11.0"
 
 from authoringfw.analysis import (
     AnalysisResult,
@@ -61,6 +61,17 @@ from authoringfw.content_types import (
     ContentTypeConfig,
     get_content_type_config,
     list_content_types,
+)
+from authoringfw.templates import (
+    CHAPTER_TEMPLATE,
+    OUTLINE_TEMPLATE,
+    PromptTemplateSpec,
+    PromptVariable,
+    SCENE_ENRICHMENT_TEMPLATE,
+    SCENE_OUTLINE_TEMPLATE,
+    STORYLINE_TEMPLATE,
+    render_story_template,
+    story_registry,
 )
 from authoringfw.writing import (
     ChapterOrchestrator,
@@ -138,5 +149,15 @@ __all__ = [
     "ContentTypeConfig",
     "get_content_type_config",
     "list_content_types",
+    # Story templates (0.11.0)
+    "OUTLINE_TEMPLATE",
+    "CHAPTER_TEMPLATE",
+    "SCENE_OUTLINE_TEMPLATE",
+    "SCENE_ENRICHMENT_TEMPLATE",
+    "STORYLINE_TEMPLATE",
+    "PromptTemplateSpec",
+    "PromptVariable",
+    "render_story_template",
+    "story_registry",
     "__version__",
 ]
