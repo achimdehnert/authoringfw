@@ -1,5 +1,19 @@
 # Changelog — authoringfw
 
+## [0.11.0] — 2026-04-25
+
+- chore(authoringfw): Platform-Workflows + Rules via bootstrap/sync-workflows
+- fix(authoringfw): Python classifier 3.11 → 3.12 (matches requires-python)
+- chore: sync .windsurf rules (typechange symlink→file)
+- chore: requires-python >= 3.12
+- chore: add MIT LICENSE
+- feat: add story prompt templates module (#13)
+- fix: lru_cache, docstring version, yaml import, tests (34 passed)
+- ci: switch PyPI publish to OIDC trusted publishing (no API token needed)
+- feat: content_types module — data-driven StyleProfile + chunk_vocab per content_type (0.10.0)
+- ci: add CI workflow with ruff lint, coverage gate, pip-audit
+
+
 ## [Unreleased]
 
 ## [0.1.0] — 2026-02-28
