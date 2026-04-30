@@ -1,12 +1,29 @@
-# authoringfw — Authoring Framework
+# iil-authoringfw — Authoring Framework
 
 Domain schemas for AI-assisted creative writing applications.
+
+[![PyPI](https://img.shields.io/pypi/v/iil-authoringfw)](https://pypi.org/project/iil-authoringfw/)
+[![Python](https://img.shields.io/pypi/pyversions/iil-authoringfw)](https://pypi.org/project/iil-authoringfw/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Installation
 
 ```bash
-pip install authoringfw
+pip install iil-authoringfw
+# With aifw LLM integration:
+pip install "iil-authoringfw[aifw]"
+# All optional dependencies:
+pip install "iil-authoringfw[all]"
 ```
+
+## Extras / Optional Dependencies
+
+| Extra | Dependencies | Purpose |
+|---|---|---|
+| `aifw` | iil-aifw>=0.6.1 | LLM completion integration |
+| `yaml` | pyyaml>=6.0 | YAML template loading |
+| `promptfw` | iil-promptfw>=0.5.5 | Prompt template rendering |
+| `all` | all above | Full feature set |
 
 ## Quick Start
 
@@ -74,3 +91,7 @@ class MyStyleAdapter:
 adapter = MyStyleAdapter()
 assert isinstance(adapter, IStyleAdapter)  # True via @runtime_checkable
 ```
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
