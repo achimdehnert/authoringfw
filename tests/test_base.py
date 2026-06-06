@@ -10,6 +10,7 @@ from authoringfw.types import ContentResult, ContentTask
 
 # ── Test doubles ──────────────────────────────────────────────────────────────
 
+
 class MinimalOrchestrator(BaseContentOrchestrator):
     """Minimal concrete implementation for unit tests."""
 
@@ -48,11 +49,16 @@ def _make_task(**kwargs):
 
 # ── I-096-04: action_code as class variable ───────────────────────────────────
 
+
 def test_should_raise_type_error_when_action_code_missing():
     with pytest.raises(TypeError, match="action_code"):
+
         class BrokenOrchestrator(BaseContentOrchestrator):
-            def _build_messages(self, task): return []
-            def _map_result(self, r, ql, task): return None
+            def _build_messages(self, task):
+                return []
+
+            def _map_result(self, r, ql, task):
+                return None
 
 
 def test_should_accept_action_code_as_class_variable():
@@ -62,13 +68,15 @@ def test_should_accept_action_code_as_class_variable():
 
 # ── I-096-01: ConfigurationError re-raised, not wrapped ──────────────────────
 
+
 def test_should_reraise_configuration_error_from_get_action_config():
     orchestrator = MinimalOrchestrator()
     task = _make_task()
 
     with patch.object(
-        orchestrator, "_get_action_config",
-        side_effect=ConfigurationError("missing row", action_code="test_action")
+        orchestrator,
+        "_get_action_config",
+        side_effect=ConfigurationError("missing row", action_code="test_action"),
     ):
         with pytest.raises(ConfigurationError, match="missing row"):
             orchestrator.execute(task)
@@ -79,8 +87,7 @@ def test_should_not_wrap_configuration_error_as_orchestration_error():
     task = _make_task()
 
     with patch.object(
-        orchestrator, "_get_action_config",
-        side_effect=ConfigurationError("deploy defect")
+        orchestrator, "_get_action_config", side_effect=ConfigurationError("deploy defect")
     ):
         with pytest.raises(ConfigurationError):
             orchestrator.execute(task)
@@ -98,15 +105,13 @@ def test_should_wrap_generic_error_as_orchestration_error():
     task = _make_task()
 
     with patch.object(orchestrator, "_get_action_config", return_value={}):
-        with patch.object(
-            orchestrator, "_build_messages",
-            side_effect=RuntimeError("unexpected")
-        ):
+        with patch.object(orchestrator, "_build_messages", side_effect=RuntimeError("unexpected")):
             with pytest.raises(OrchestrationError, match="build request"):
                 orchestrator.execute(task)
 
 
 # ── I-096-02: quality_level passed explicitly to _map_result ─────────────────
+
 
 def test_should_pass_quality_level_explicitly_to_map_result():
     received_ql = []
@@ -114,12 +119,15 @@ def test_should_pass_quality_level_explicitly_to_map_result():
     class TrackingOrchestrator(BaseContentOrchestrator):
         action_code = "tracking"
 
-        def _build_messages(self, task): return [{"role": "user", "content": "x"}]
+        def _build_messages(self, task):
+            return [{"role": "user", "content": "x"}]
 
         def _map_result(self, llm_result, quality_level, task):
             received_ql.append(quality_level)
             return ContentResult(
-                content="ok", action_code=self.action_code, quality_level=quality_level,
+                content="ok",
+                action_code=self.action_code,
+                quality_level=quality_level,
             )
 
     orch = TrackingOrchestrator()
@@ -161,6 +169,7 @@ def test_should_resolve_quality_level_none_when_no_default():
 
 # ── execute() happy path ──────────────────────────────────────────────────────
 
+
 def test_should_return_content_result_on_success():
     orch = MinimalOrchestrator()
     task = _make_task(prompt_variables={"text": "write something"})
@@ -181,11 +190,18 @@ def test_should_call_pre_and_post_hooks():
 
     class HookOrchestrator(BaseContentOrchestrator):
         action_code = "hooks"
-        def _build_messages(self, task): return [{"role": "user", "content": "x"}]
+
+        def _build_messages(self, task):
+            return [{"role": "user", "content": "x"}]
+
         def _map_result(self, r, ql, task):
             return ContentResult(content="ok", action_code=self.action_code)
-        def pre_execute(self, task): pre_called.append(True)
-        def post_execute(self, task, result): post_called.append(True)
+
+        def pre_execute(self, task):
+            pre_called.append(True)
+
+        def post_execute(self, task, result):
+            post_called.append(True)
 
     orch = HookOrchestrator()
     task = ContentTask(action_code="hooks")

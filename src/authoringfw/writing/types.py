@@ -78,7 +78,9 @@ class ChapterResult(ContentResult):
     model_config = ConfigDict(frozen=True)
 
     chapter_title: str = Field(default="", description="Echo of ChapterTask.chapter_title")
-    estimated_word_count: int = Field(default=0, ge=0, description="Word count of generated content")
+    estimated_word_count: int = Field(
+        default=0, ge=0, description="Word count of generated content"
+    )
 
 
 class SummaryTask(BaseModel):

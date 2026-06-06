@@ -1,6 +1,6 @@
 [project]
 name = "iil-authoringfw"
-version = "0.11.0"
+version = "0.11.1"
 description = "Authoring Framework — domain schemas and orchestration base for AI-assisted creative writing"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -22,6 +22,7 @@ classifiers = [
 
 dependencies = [
     "pydantic>=2.6",
+    "pyyaml>=6.0",  # runtime: content_types loads StyleProfile from YAML (eager via __init__)
 ]
 
 [project.optional-dependencies]
@@ -43,6 +44,7 @@ dev = [
     "pytest>=8.0",
     "pytest-mock>=3.12",
     "pytest-asyncio>=0.23",
+    "pytest-cov>=4",
 ]
 testing = [
     "pytest>=8.0",

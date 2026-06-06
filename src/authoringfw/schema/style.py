@@ -93,11 +93,11 @@ class StyleProfile(BaseModel):
         if llm_completion_fn is None:
             try:
                 from aifw.service import completion as aifw_completion
+
                 llm_completion_fn = aifw_completion
             except ImportError as e:
                 raise ImportError(
-                    "aifw is required for StyleProfile.from_text(). "
-                    "Install with: pip install aifw"
+                    "aifw is required for StyleProfile.from_text(). Install with: pip install aifw"
                 ) from e
 
         result = await llm_completion_fn(action_code, messages)

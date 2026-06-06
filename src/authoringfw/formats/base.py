@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseModel, Field
 
@@ -39,9 +39,7 @@ class FormatProfile(BaseModel):
     format_type: str
     display_name: str
     description: str = ""
-    phases: list[WorkflowPhase] = Field(
-        default_factory=lambda: list(WorkflowPhase)
-    )
+    phases: list[WorkflowPhase] = Field(default_factory=lambda: list(WorkflowPhase))
     steps: list[StepConfig] = Field(default_factory=list)
     style_constraints: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
@@ -58,6 +56,7 @@ class FormatProfile(BaseModel):
         Lazy import to avoid circular dependency.
         """
         from authoringfw.planning import get_planning_config
+
         return get_planning_config(self.format_type)
 
 
@@ -79,7 +78,11 @@ SERIE = FormatProfile(
     format_type="serie",
     display_name="Series",
     description="Multi-volume fiction with shared universe and recurring characters.",
-    style_constraints=["Series-wide consistency", "Character continuity", "World-building coherence"],
+    style_constraints=[
+        "Series-wide consistency",
+        "Character continuity",
+        "World-building coherence",
+    ],
 )
 
 SCIENTIFIC = FormatProfile(
@@ -107,7 +110,12 @@ SCREENPLAY = FormatProfile(
     format_type="screenplay",
     display_name="Screenplay",
     description="Film or TV script with scene headings, action lines, and dialogue.",
-    style_constraints=["INT./EXT. scene headings", "Present tense", "Show don't tell", "Dialogue-driven"],
+    style_constraints=[
+        "INT./EXT. scene headings",
+        "Present tense",
+        "Show don't tell",
+        "Dialogue-driven",
+    ],
 )
 
 SHORT_STORY = FormatProfile(
@@ -121,14 +129,24 @@ BLOG_POST = FormatProfile(
     format_type="blog_post",
     display_name="Blog Post",
     description="Informative or opinion web article with SEO-friendly structure.",
-    style_constraints=["Conversational tone", "H2/H3 headings", "Short paragraphs", "Call to action"],
+    style_constraints=[
+        "Conversational tone",
+        "H2/H3 headings",
+        "Short paragraphs",
+        "Call to action",
+    ],
 )
 
 PODCAST_SCRIPT = FormatProfile(
     format_type="podcast_script",
     display_name="Podcast Script",
     description="Spoken-word audio script with host/guest dialogue and show notes.",
-    style_constraints=["Spoken language", "No complex punctuation", "Natural transitions", "Listener-friendly summaries"],
+    style_constraints=[
+        "Spoken language",
+        "No complex punctuation",
+        "Natural transitions",
+        "Listener-friendly summaries",
+    ],
 )
 
 FORMAT_REGISTRY: dict[str, FormatProfile] = {

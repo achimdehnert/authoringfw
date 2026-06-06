@@ -135,8 +135,16 @@ class PlotAnalysisOrchestrator(BaseContentOrchestrator):
         self,
         task: ContentTask,
     ) -> list[dict[str, str]]:
-        source = task.source_text if isinstance(task, AnalysisTask) else task.prompt_variables.get("source_text", "")
-        focus = task.analysis_focus if isinstance(task, AnalysisTask) else task.prompt_variables.get("analysis_focus", "")
+        source = (
+            task.source_text
+            if isinstance(task, AnalysisTask)
+            else task.prompt_variables.get("source_text", "")
+        )
+        focus = (
+            task.analysis_focus
+            if isinstance(task, AnalysisTask)
+            else task.prompt_variables.get("analysis_focus", "")
+        )
 
         system_parts = [
             "Du bist ein Dramaturg und Story-Analyst. Analysiere die Plotstruktur:",

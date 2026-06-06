@@ -1,6 +1,5 @@
 """Tests for authoringfw.writing.chunked — ChunkedChapterOrchestrator."""
 
-import pytest
 from unittest.mock import MagicMock, patch
 
 from authoringfw.writing import (
@@ -15,6 +14,7 @@ from authoringfw.writing import (
 
 # ── Helper ────────────────────────────────────────────────────────────────────
 
+
 def _make_llm_result(content="Generated chapter text here", success=True):
     r = MagicMock()
     r.content = content
@@ -27,6 +27,7 @@ def _make_llm_result(content="Generated chapter text here", success=True):
 
 
 # ── compute_max_tokens ────────────────────────────────────────────────────────
+
 
 def test_compute_max_tokens_minimum():
     """Short chapters should still get MIN_MAX_TOKENS."""
@@ -48,6 +49,7 @@ def test_compute_words_per_chunk():
 
 # ── ChunkedChapterOrchestrator: single-shot for short chapters ────────────────
 
+
 def test_short_chapter_uses_single_shot():
     """Chapters under words_per_chunk threshold use single execute()."""
     orch = ChunkedChapterOrchestrator(model_max_tokens=4096)
@@ -57,16 +59,19 @@ def test_short_chapter_uses_single_shot():
         target_word_count=1000,
     )
 
-    llm = _make_llm_result("Short chapter content.")
-    with patch.object(ChapterOrchestrator, "execute", return_value=ChapterResult(
-        content="Short chapter content.",
-        action_code="chapter_writing",
-        model="gpt-4o",
-        success=True,
-        chapter_title="Short Chapter",
-        estimated_word_count=3,
-    )) as mock_execute:
-        result = orch.execute(task)
+    with patch.object(
+        ChapterOrchestrator,
+        "execute",
+        return_value=ChapterResult(
+            content="Short chapter content.",
+            action_code="chapter_writing",
+            model="gpt-4o",
+            success=True,
+            chapter_title="Short Chapter",
+            estimated_word_count=3,
+        ),
+    ) as mock_execute:
+        orch.execute(task)
 
     assert mock_execute.called
     # The enriched task should have max_tokens in llm_overrides
@@ -84,15 +89,19 @@ def test_short_chapter_preserves_existing_overrides():
         llm_overrides={"model": "openai:gpt-4o"},
     )
 
-    with patch.object(ChapterOrchestrator, "execute", return_value=ChapterResult(
-        content="Premium content.",
-        action_code="chapter_writing",
-        model="gpt-4o",
-        success=True,
-        chapter_title="Premium Chapter",
-        estimated_word_count=2,
-    )) as mock_execute:
-        result = orch.execute(task)
+    with patch.object(
+        ChapterOrchestrator,
+        "execute",
+        return_value=ChapterResult(
+            content="Premium content.",
+            action_code="chapter_writing",
+            model="gpt-4o",
+            success=True,
+            chapter_title="Premium Chapter",
+            estimated_word_count=2,
+        ),
+    ) as mock_execute:
+        orch.execute(task)
 
     called_task = mock_execute.call_args[0][0]
     assert called_task.llm_overrides.get("model") == "openai:gpt-4o"
@@ -100,6 +109,7 @@ def test_short_chapter_preserves_existing_overrides():
 
 
 # ── ChunkedChapterOrchestrator: chunked for long chapters ─────────────────────
+
 
 def test_long_chapter_uses_chunked_generation():
     """Chapters over words_per_chunk should trigger multi-chunk."""
@@ -172,6 +182,7 @@ def test_chunked_accumulates_tokens_and_latency():
 
 # ── Graceful degradation ──────────────────────────────────────────────────────
 
+
 def test_partial_content_on_mid_chunk_failure():
     """If a chunk fails after some succeed, return partial content."""
     from authoringfw.exceptions import OrchestrationError
@@ -211,6 +222,7 @@ def test_partial_content_on_mid_chunk_failure():
 
 
 # ── llm_overrides pass-through ────────────────────────────────────────────────
+
 
 def test_llm_overrides_forwarded_to_content_task():
     """ContentTask.llm_overrides should exist and default to empty dict."""

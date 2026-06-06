@@ -24,9 +24,7 @@ _FORMAT_INSTRUCTIONS: dict[str, str] = {
         "Antworte als strukturierte Stichpunktliste. "
         "Jeder Punkt ist prägnant und eigenständig verständlich."
     ),
-    "prose": (
-        "Antworte als fließender Prosa-Text in einem klaren, sachlichen Stil."
-    ),
+    "prose": ("Antworte als fließender Prosa-Text in einem klaren, sachlichen Stil."),
 }
 
 
@@ -67,7 +65,9 @@ class ResearchOrchestrator(BaseContentOrchestrator):
         task: ContentTask,
     ) -> ResearchResult:
         content = llm_result.content if llm_result.success else ""
-        topic = task.topic if isinstance(task, ResearchTask) else task.prompt_variables.get("topic", "")
+        topic = (
+            task.topic if isinstance(task, ResearchTask) else task.prompt_variables.get("topic", "")
+        )
         return ResearchResult(
             content=content,
             action_code=self.action_code,
@@ -110,7 +110,9 @@ class ResearchOrchestrator(BaseContentOrchestrator):
         fmt_key = v.get("output_format", "structured")
         max_words = v.get("max_words", 500)
         fmt = _FORMAT_INSTRUCTIONS.get(fmt_key, _FORMAT_INSTRUCTIONS["structured"])
-        system = f"Du bist ein Recherche-Assistent für Buchautoren. {fmt} Maximal {max_words} Wörter."
+        system = (
+            f"Du bist ein Recherche-Assistent für Buchautoren. {fmt} Maximal {max_words} Wörter."
+        )
         return [
             {"role": "system", "content": system},
             {"role": "user", "content": f"Recherchiere: {topic}"},

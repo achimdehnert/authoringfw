@@ -26,9 +26,7 @@ target_word_count and the configured token budget.
 from __future__ import annotations
 
 import logging
-from typing import Any
 
-from authoringfw.base import BaseContentOrchestrator
 from authoringfw.exceptions import ConfigurationError, OrchestrationError
 from authoringfw.types import ContentResult, ContentTask
 from authoringfw.writing.chapter import ChapterOrchestrator
@@ -89,9 +87,7 @@ class ChunkedChapterOrchestrator(ChapterOrchestrator):
 
         target_words = task.target_word_count
         dynamic_max_tokens = compute_max_tokens(target_words)
-        words_per_chunk = compute_words_per_chunk(
-            min(dynamic_max_tokens, self.model_max_tokens)
-        )
+        words_per_chunk = compute_words_per_chunk(min(dynamic_max_tokens, self.model_max_tokens))
 
         if target_words <= words_per_chunk:
             # Single-shot: just set dynamic max_tokens and delegate
@@ -101,9 +97,7 @@ class ChunkedChapterOrchestrator(ChapterOrchestrator):
         # Chunked generation
         return self._execute_chunked(task, dynamic_max_tokens, words_per_chunk)
 
-    def _enrich_task_with_tokens(
-        self, task: ChapterTask, max_tokens: int
-    ) -> ChapterTask:
+    def _enrich_task_with_tokens(self, task: ChapterTask, max_tokens: int) -> ChapterTask:
         """Return a new ChapterTask with max_tokens set in llm_overrides."""
         overrides = dict(task.llm_overrides)
         overrides.setdefault("max_tokens", max_tokens)
@@ -158,8 +152,12 @@ class ChunkedChapterOrchestrator(ChapterOrchestrator):
                         exc,
                     )
                     return self._build_partial_result(
-                        task, all_content, total_input_tokens,
-                        total_output_tokens, total_latency_ms, last_model,
+                        task,
+                        all_content,
+                        total_input_tokens,
+                        total_output_tokens,
+                        total_latency_ms,
+                        last_model,
                     )
                 raise
 

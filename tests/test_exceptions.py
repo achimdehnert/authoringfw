@@ -1,7 +1,5 @@
 """Tests for authoringfw exception hierarchy."""
 
-import pytest
-
 from authoringfw.exceptions import (
     AuthoringFWError,
     ConfigurationError,
