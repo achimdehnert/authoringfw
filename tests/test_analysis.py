@@ -51,6 +51,7 @@ def plot_task():
 
 # ── AnalysisTask validation ─────────────────────────────────────────────────
 
+
 def test_should_create_analysis_task_with_defaults(style_task):
     assert style_task.action_code == "style_analysis"
     assert style_task.output_format == "structured"
@@ -70,6 +71,7 @@ def test_should_reject_quality_level_out_of_range():
 
 # ── AnalysisResult validation ────────────────────────────────────────────────
 
+
 def test_should_create_analysis_result_with_defaults():
     result = AnalysisResult(content="ok", action_code="style_analysis")
     assert result.score is None
@@ -82,6 +84,7 @@ def test_should_reject_score_out_of_range():
 
 
 # ── StyleAnalysisOrchestrator._build_messages ────────────────────────────────
+
 
 def test_should_build_style_messages(style_task):
     orch = StyleAnalysisOrchestrator()
@@ -138,6 +141,7 @@ def test_should_truncate_long_source_text():
 
 # ── StyleAnalysisOrchestrator._map_result ──────────────────────────────────
 
+
 def test_should_extract_score_from_content(style_task):
     orch = StyleAnalysisOrchestrator()
     llm = _make_llm_result("Gute Qualität.\n\nSCORE: 0.85")
@@ -177,6 +181,7 @@ def test_should_return_empty_content_on_failure(style_task):
 
 # ── StyleAnalysisOrchestrator full execute ───────────────────────────────────
 
+
 def test_should_execute_style_analysis(style_task):
     orch = StyleAnalysisOrchestrator()
     llm = _make_llm_result("Sehr guter Stil.\n- Konsistenter Ton\n- Klare Struktur\nSCORE: 0.9")
@@ -192,6 +197,7 @@ def test_should_execute_style_analysis(style_task):
 
 
 # ── PlotAnalysisOrchestrator._build_messages ────────────────────────────────
+
 
 def test_should_build_plot_messages(plot_task):
     orch = PlotAnalysisOrchestrator()
@@ -214,6 +220,7 @@ def test_should_include_plot_focus_when_provided():
 
 # ── PlotAnalysisOrchestrator full execute ───────────────────────────────────
 
+
 def test_should_execute_plot_analysis(plot_task):
     orch = PlotAnalysisOrchestrator()
     llm = _make_llm_result("Solide Spannungskurve.\n- Guter Einstieg\n- Schwaches Ende")
@@ -229,6 +236,7 @@ def test_should_execute_plot_analysis(plot_task):
 
 # ── Cross-domain: Chapter → StyleAnalysis ───────────────────────────────────
 
+
 def test_should_pipeline_chapter_into_style_analysis():
     from authoringfw.writing import ChapterOrchestrator, ChapterTask
 
@@ -243,10 +251,12 @@ def test_should_pipeline_chapter_into_style_analysis():
 
     with patch.object(chapter_orch, "_get_action_config", return_value={}):
         with patch.object(chapter_orch, "_call_llm", return_value=chapter_llm):
-            chapter_result = chapter_orch.execute(ChapterTask(
-                chapter_title="Kapitel 1",
-                chapter_outline="Held bricht auf.",
-            ))
+            chapter_result = chapter_orch.execute(
+                ChapterTask(
+                    chapter_title="Kapitel 1",
+                    chapter_outline="Held bricht auf.",
+                )
+            )
 
     analysis_task = AnalysisTask(
         action_code="style_analysis",

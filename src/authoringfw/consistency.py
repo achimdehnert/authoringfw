@@ -45,7 +45,9 @@ class ConsistencyReport:
     def summary(self) -> str:
         if not self.issues:
             return "✅ No consistency issues found."
-        lines = [f"Score: {self.score:.0%} — {len(self.errors)} errors, {len(self.warnings)} warnings"]
+        lines = [
+            f"Score: {self.score:.0%} — {len(self.errors)} errors, {len(self.warnings)} warnings"
+        ]
         for issue in self.issues:
             prefix = "❌" if issue.severity == "error" else "⚠️"
             lines.append(f"{prefix} [{issue.category}] {issue.message}")
@@ -96,18 +98,19 @@ class ConsistencyChecker:
         issues = []
         for char in self._characters:
             wrong_caps = [
-                m.group() for m in re.finditer(
-                    re.escape(char.name.lower()), text
-                )
+                m.group()
+                for m in re.finditer(re.escape(char.name.lower()), text)
                 if m.group() != char.name and m.group().lower() == char.name.lower()
             ]
             if wrong_caps:
-                issues.append(ConsistencyIssue(
-                    severity="warning",
-                    category="character_name",
-                    message=f"Name '{char.name}' appears with wrong capitalization: {set(wrong_caps)}",
-                    suggestion=f"Always use '{char.name}' (exact casing).",
-                ))
+                issues.append(
+                    ConsistencyIssue(
+                        severity="warning",
+                        category="character_name",
+                        message=f"Name '{char.name}' appears with wrong capitalization: {set(wrong_caps)}",
+                        suggestion=f"Always use '{char.name}' (exact casing).",
+                    )
+                )
         return issues
 
     def _check_world_rules(self, text: str) -> list[ConsistencyIssue]:
@@ -121,12 +124,14 @@ class ConsistencyChecker:
             key_phrase = rule.split()[0:4]
             negated = f"no {' '.join(key_phrase[:2]).lower()}"
             if negated in text.lower():
-                issues.append(ConsistencyIssue(
-                    severity="warning",
-                    category="world_rule",
-                    message=f"Text may contradict world rule: '{rule}'",
-                    suggestion="Review the passage against world rules.",
-                ))
+                issues.append(
+                    ConsistencyIssue(
+                        severity="warning",
+                        category="world_rule",
+                        message=f"Text may contradict world rule: '{rule}'",
+                        suggestion="Review the passage against world rules.",
+                    )
+                )
         return issues
 
     def _check_forbidden_terms(self, text: str) -> list[ConsistencyIssue]:
@@ -138,12 +143,14 @@ class ConsistencyChecker:
                 modern_terms = ["smartphone", "internet", "computer", "email", "twitter"]
                 found = [t for t in modern_terms if t in text.lower()]
                 if found:
-                    issues.append(ConsistencyIssue(
-                        severity="error",
-                        category="anachronism",
-                        message=f"Anachronistic terms found in {period} setting: {found}",
-                        suggestion="Remove or replace modern terms.",
-                    ))
+                    issues.append(
+                        ConsistencyIssue(
+                            severity="error",
+                            category="anachronism",
+                            message=f"Anachronistic terms found in {period} setting: {found}",
+                            suggestion="Remove or replace modern terms.",
+                        )
+                    )
         return issues
 
     async def check_with_llm(
@@ -159,9 +166,7 @@ class ConsistencyChecker:
         """
         base_report = self.check(text)
 
-        character_context = "\n".join(
-            c.to_context_string() for c in self._characters
-        )
+        character_context = "\n".join(c.to_context_string() for c in self._characters)
         world_context = self._world.to_context_string() if self._world else ""
 
         prompt = (
@@ -178,6 +183,7 @@ class ConsistencyChecker:
         if llm_completion_fn is None:
             try:
                 from aifw.service import completion as aifw_completion
+
                 llm_completion_fn = aifw_completion
             except ImportError as e:
                 raise ImportError(
@@ -185,6 +191,7 @@ class ConsistencyChecker:
                 ) from e
 
         import json
+
         result = await llm_completion_fn(action_code, messages)
         if result.success:
             try:

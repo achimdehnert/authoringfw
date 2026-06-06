@@ -80,7 +80,8 @@ def get_content_type_config(content_type: str) -> ContentTypeConfig:
     if not yaml_path.exists():
         logger.warning(
             "No config for content_type '%s', falling back to '%s'",
-            content_type, _DEFAULT_CONTENT_TYPE,
+            content_type,
+            _DEFAULT_CONTENT_TYPE,
         )
         yaml_path = d / f"{_DEFAULT_CONTENT_TYPE}.yaml"
 

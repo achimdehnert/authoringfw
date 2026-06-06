@@ -90,6 +90,7 @@ _FORMAT_INSTRUCTIONS: dict[str, str] = {
 # Pydantic models
 # ---------------------------------------------------------------------------
 
+
 class ReformatTask(BaseModel):
     """Input for TextReformatter."""
 
@@ -128,6 +129,7 @@ class ReformatResult(BaseModel):
 # Service
 # ---------------------------------------------------------------------------
 
+
 class TextReformatter:
     """
     Generic text transformation service.
@@ -156,17 +158,14 @@ class TextReformatter:
         cls._registry[name] = instruction
 
     def _get_instruction(self, target_format: str, language: str) -> str:
-        base = (
-            self._registry.get(target_format)
-            or _FORMAT_INSTRUCTIONS.get(target_format)
-        )
+        base = self._registry.get(target_format) or _FORMAT_INSTRUCTIONS.get(target_format)
         if not base:
             raise ValueError(
                 f"Unknown target_format {target_format!r}. "
                 f"Available: {list(_FORMAT_INSTRUCTIONS) + list(self._registry)}"
             )
         lang_suffix = (
-            f" Schreibe auf Deutsch."
+            " Schreibe auf Deutsch."
             if language == "de"
             else f" Write in {language}."
             if language != "de"
@@ -247,13 +246,11 @@ class TextReformatter:
 # Rule-based fallback helpers
 # ---------------------------------------------------------------------------
 
+
 def _markdown_to_bullets(text: str) -> str:
     """Extract existing bullet lines or split sentences into bullets."""
     lines = text.splitlines()
-    bullets = [
-        line for line in lines
-        if re.match(r"^\s*[-*•▸]\s+", line)
-    ]
+    bullets = [line for line in lines if re.match(r"^\s*[-*•▸]\s+", line)]
     if bullets:
         return "\n".join(bullets)
     sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]

@@ -16,6 +16,7 @@ from authoringfw.writing import (
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
+
 def _make_llm_result(content="Chapter text here", success=True):
     r = MagicMock()
     r.content = content
@@ -49,6 +50,7 @@ def summary_task():
 
 # ── ChapterTask validation ────────────────────────────────────────────────────
 
+
 def test_should_create_chapter_task_with_defaults(chapter_task):
     assert chapter_task.action_code == "chapter_writing"
     assert chapter_task.target_word_count == 500
@@ -77,6 +79,7 @@ def test_should_be_frozen(chapter_task):
 
 
 # ── ChapterOrchestrator._build_messages ──────────────────────────────────────
+
 
 def test_should_build_messages_with_system_and_user(chapter_task):
     orch = ChapterOrchestrator()
@@ -130,6 +133,7 @@ def test_should_include_world_context_in_system_when_provided():
 
 # ── ChapterOrchestrator._map_result ──────────────────────────────────────────
 
+
 def test_should_map_result_to_chapter_result(chapter_task):
     orch = ChapterOrchestrator()
     llm = _make_llm_result("Beautiful prose.")
@@ -153,6 +157,7 @@ def test_should_use_explicit_quality_level_not_from_llm_result(chapter_task):
 
 # ── ChapterOrchestrator full execute (mocked aifw) ───────────────────────────
 
+
 def test_should_execute_and_return_chapter_result(chapter_task):
     orch = ChapterOrchestrator()
     llm = _make_llm_result("Once upon a time...")
@@ -169,6 +174,7 @@ def test_should_execute_and_return_chapter_result(chapter_task):
 
 # ── SummaryTask validation ────────────────────────────────────────────────────
 
+
 def test_should_create_summary_task_with_defaults(summary_task):
     assert summary_task.action_code == "summary_writing"
     assert summary_task.summary_style == "brief"
@@ -181,6 +187,7 @@ def test_should_reject_max_words_below_minimum():
 
 
 # ── SummaryOrchestrator._build_messages ──────────────────────────────────────
+
 
 def test_should_build_summary_messages(summary_task):
     orch = SummaryOrchestrator()
@@ -219,6 +226,7 @@ def test_should_truncate_long_source_text():
 
 # ── SummaryOrchestrator full execute ─────────────────────────────────────────
 
+
 def test_should_execute_summary_and_return_result(summary_task):
     orch = SummaryOrchestrator()
     llm = _make_llm_result("Held beginnt Reise.")
@@ -234,6 +242,7 @@ def test_should_execute_summary_and_return_result(summary_task):
 
 # ── Pipeline: Chapter → Summary → next Chapter ───────────────────────────────
 
+
 def test_should_pipeline_summary_into_next_chapter():
     """ADR-096 §4.5: Research → Writing pipeline pattern."""
     chapter_orch = ChapterOrchestrator()
@@ -244,16 +253,20 @@ def test_should_pipeline_summary_into_next_chapter():
 
     with patch.object(chapter_orch, "_get_action_config", return_value={}):
         with patch.object(chapter_orch, "_call_llm", return_value=chapter_llm):
-            chapter_result = chapter_orch.execute(ChapterTask(
-                chapter_title="Kapitel 1",
-                chapter_outline="Held wird gerufen.",
-            ))
+            chapter_result = chapter_orch.execute(
+                ChapterTask(
+                    chapter_title="Kapitel 1",
+                    chapter_outline="Held wird gerufen.",
+                )
+            )
 
     with patch.object(summary_orch, "_get_action_config", return_value={}):
         with patch.object(summary_orch, "_call_llm", return_value=summary_llm):
-            summary_result = summary_orch.execute(SummaryTask(
-                source_text=chapter_result.content,
-            ))
+            summary_result = summary_orch.execute(
+                SummaryTask(
+                    source_text=chapter_result.content,
+                )
+            )
 
     next_task = ChapterTask(
         chapter_title="Kapitel 2",

@@ -6,7 +6,7 @@ and planning editor for each content format.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class PlanningFieldConfig(BaseModel):
@@ -88,8 +88,7 @@ PLANNING_NONFICTION = PlanningFieldConfig(
 PLANNING_ACADEMIC = PlanningFieldConfig(
     premise_label="Forschungsfrage & Zielsetzung",
     premise_placeholder=(
-        "Was ist deine zentrale Forschungsfrage? "
-        "Welches wissenschaftliche Ziel verfolgst du?"
+        "Was ist deine zentrale Forschungsfrage? Welches wissenschaftliche Ziel verfolgst du?"
     ),
     show_themes=False,
     show_logline=False,
@@ -111,17 +110,13 @@ PLANNING_ACADEMIC = PlanningFieldConfig(
 
 PLANNING_SCIENTIFIC = PlanningFieldConfig(
     premise_label="Forschungsfrage & Hypothese",
-    premise_placeholder=(
-        "Was ist deine Forschungsfrage? "
-        "Formuliere eine testbare Hypothese."
-    ),
+    premise_placeholder=("Was ist deine Forschungsfrage? Formuliere eine testbare Hypothese."),
     show_themes=False,
     show_logline=False,
     show_abstract=True,
     abstract_label="Abstract (IMRaD)",
     abstract_placeholder=(
-        "Introduction / Methods / Results / Discussion — "
-        "Kurzzusammenfassung der Arbeit."
+        "Introduction / Methods / Results / Discussion — Kurzzusammenfassung der Arbeit."
     ),
     show_hypothesis=True,
     hypothesis_label="Nullhypothese",
@@ -137,10 +132,7 @@ PLANNING_SCIENTIFIC = PlanningFieldConfig(
 
 PLANNING_ESSAY = PlanningFieldConfig(
     premise_label="These / Kernargument",
-    premise_placeholder=(
-        "Was ist deine Hauptthese? "
-        "Welche Position vertrittst du?"
-    ),
+    premise_placeholder=("Was ist deine Hauptthese? Welche Position vertrittst du?"),
     show_themes=True,
     show_logline=False,
     show_abstract=False,
@@ -157,8 +149,7 @@ PLANNING_ESSAY = PlanningFieldConfig(
 PLANNING_SERIE = PlanningFieldConfig(
     premise_label="Serienbibel / Prämisse",
     premise_placeholder=(
-        "Was ist das übergreifende Thema und die Welt der Serie? "
-        "Was verbindet alle Bände?"
+        "Was ist das übergreifende Thema und die Welt der Serie? Was verbindet alle Bände?"
     ),
     show_themes=True,
     show_logline=True,
@@ -178,8 +169,7 @@ PLANNING_SERIE = PlanningFieldConfig(
 PLANNING_SCREENPLAY = PlanningFieldConfig(
     premise_label="Konzept / Logline",
     premise_placeholder=(
-        "Worum geht es in deinem Film/deiner Serie? "
-        "Was ist der zentrale Konflikt?"
+        "Worum geht es in deinem Film/deiner Serie? Was ist der zentrale Konflikt?"
     ),
     show_themes=True,
     show_logline=True,
@@ -219,10 +209,7 @@ PLANNING_SHORT_STORY = PlanningFieldConfig(
 
 PLANNING_BLOG_POST = PlanningFieldConfig(
     premise_label="Thema & Kernaussage",
-    premise_placeholder=(
-        "Worüber schreibst du? "
-        "Was ist die wichtigste Erkenntnis für den Leser?"
-    ),
+    premise_placeholder=("Worüber schreibst du? Was ist die wichtigste Erkenntnis für den Leser?"),
     show_themes=False,
     show_logline=False,
     show_abstract=True,
@@ -240,10 +227,7 @@ PLANNING_BLOG_POST = PlanningFieldConfig(
 
 PLANNING_PODCAST_SCRIPT = PlanningFieldConfig(
     premise_label="Folgenthema",
-    premise_placeholder=(
-        "Was ist das Thema dieser Episode? "
-        "Welche Frage wird beantwortet?"
-    ),
+    premise_placeholder=("Was ist das Thema dieser Episode? Welche Frage wird beantwortet?"),
     show_themes=False,
     show_logline=False,
     show_abstract=True,

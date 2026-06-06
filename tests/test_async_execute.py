@@ -6,6 +6,7 @@ Error-handling contract is identical to execute():
   - All other failures become OrchestrationError
   - quality_level is explicit param to _map_result() (I-096-02)
 """
+
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -15,6 +16,7 @@ from authoringfw.types import ContentResult, ContentTask
 
 
 # ── Test doubles ──────────────────────────────────────────────────────────────────
+
 
 class AsyncOrchestrator(BaseContentOrchestrator):
     """Minimal concrete orchestrator for async tests."""
@@ -55,6 +57,7 @@ def _make_task(**kwargs):
 
 # ── Happy path ──────────────────────────────────────────────────────────────────────
 
+
 @pytest.mark.asyncio
 async def test_should_return_content_result_async():
     """async_execute() returns ContentResult on success."""
@@ -79,11 +82,14 @@ async def test_should_pass_quality_level_to_map_result_async():
     class TrackingAsync(BaseContentOrchestrator):
         action_code = "tracking_async"
 
-        def _build_messages(self, task): return [{"role": "user", "content": "x"}]
+        def _build_messages(self, task):
+            return [{"role": "user", "content": "x"}]
 
         def _map_result(self, llm_result, quality_level, task):
             received_ql.append(quality_level)
-            return ContentResult(content="ok", action_code=self.action_code, quality_level=quality_level)
+            return ContentResult(
+                content="ok", action_code=self.action_code, quality_level=quality_level
+            )
 
     orch = TrackingAsync()
     task = ContentTask(action_code="tracking_async", quality_level=7)
@@ -102,7 +108,10 @@ async def test_should_resolve_quality_level_from_config_in_async():
 
     class TrackingAsync2(BaseContentOrchestrator):
         action_code = "tracking_async2"
-        def _build_messages(self, task): return [{"role": "user", "content": "x"}]
+
+        def _build_messages(self, task):
+            return [{"role": "user", "content": "x"}]
+
         def _map_result(self, llm_result, quality_level, task):
             received_ql.append(quality_level)
             return ContentResult(content="ok", action_code=self.action_code)
@@ -119,6 +128,7 @@ async def test_should_resolve_quality_level_from_config_in_async():
 
 # ── I-096-01: ConfigurationError propagates unchanged in async ───────────────────
 
+
 @pytest.mark.asyncio
 async def test_should_reraise_configuration_error_from_get_action_config_async():
     """ConfigurationError from _get_action_config must propagate (not wrapped)."""
@@ -126,8 +136,9 @@ async def test_should_reraise_configuration_error_from_get_action_config_async()
     task = _make_task()
 
     with patch.object(
-        orch, "_get_action_config",
-        side_effect=ConfigurationError("missing row", action_code="async_test")
+        orch,
+        "_get_action_config",
+        side_effect=ConfigurationError("missing row", action_code="async_test"),
     ):
         with pytest.raises(ConfigurationError, match="missing row"):
             await orch.async_execute(task)
@@ -141,8 +152,7 @@ async def test_should_not_wrap_configuration_error_as_orchestration_error_async(
 
     with patch.object(orch, "_get_action_config", return_value={}):
         with patch.object(
-            orch, "_call_llm_async",
-            new=AsyncMock(side_effect=ConfigurationError("no model"))
+            orch, "_call_llm_async", new=AsyncMock(side_effect=ConfigurationError("no model"))
         ):
             try:
                 await orch.async_execute(task)
@@ -160,8 +170,7 @@ async def test_should_wrap_generic_llm_error_as_orchestration_error_async():
 
     with patch.object(orch, "_get_action_config", return_value={}):
         with patch.object(
-            orch, "_call_llm_async",
-            new=AsyncMock(side_effect=RuntimeError("network timeout"))
+            orch, "_call_llm_async", new=AsyncMock(side_effect=RuntimeError("network timeout"))
         ):
             with pytest.raises(OrchestrationError, match="Async LLM call failed"):
                 await orch.async_execute(task)
@@ -174,15 +183,13 @@ async def test_should_wrap_build_messages_error_as_orchestration_error_async():
     task = _make_task()
 
     with patch.object(orch, "_get_action_config", return_value={}):
-        with patch.object(
-            orch, "_build_messages",
-            side_effect=RuntimeError("template missing")
-        ):
+        with patch.object(orch, "_build_messages", side_effect=RuntimeError("template missing")):
             with pytest.raises(OrchestrationError, match="build request"):
                 await orch.async_execute(task)
 
 
 # ── Async lifecycle hooks ─────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_should_call_async_pre_and_post_hooks():
@@ -192,11 +199,18 @@ async def test_should_call_async_pre_and_post_hooks():
 
     class HookedAsync(BaseContentOrchestrator):
         action_code = "hooked_async"
-        def _build_messages(self, task): return [{"role": "user", "content": "x"}]
+
+        def _build_messages(self, task):
+            return [{"role": "user", "content": "x"}]
+
         def _map_result(self, r, ql, task):
             return ContentResult(content="ok", action_code=self.action_code)
-        async def pre_execute_async(self, task): pre_called.append(True)
-        async def post_execute_async(self, task, result): post_called.append(True)
+
+        async def pre_execute_async(self, task):
+            pre_called.append(True)
+
+        async def post_execute_async(self, task, result):
+            post_called.append(True)
 
     orch = HookedAsync()
     task = ContentTask(action_code="hooked_async")
@@ -216,19 +230,21 @@ async def test_should_not_call_post_hook_on_failure():
 
     class FailHookedAsync(BaseContentOrchestrator):
         action_code = "fail_hooked"
-        def _build_messages(self, task): return [{"role": "user", "content": "x"}]
+
+        def _build_messages(self, task):
+            return [{"role": "user", "content": "x"}]
+
         def _map_result(self, r, ql, task):
             return ContentResult(content="ok", action_code=self.action_code)
-        async def post_execute_async(self, task, result): post_called.append(True)
+
+        async def post_execute_async(self, task, result):
+            post_called.append(True)
 
     orch = FailHookedAsync()
     task = ContentTask(action_code="fail_hooked")
 
     with patch.object(orch, "_get_action_config", return_value={}):
-        with patch.object(
-            orch, "_call_llm_async",
-            new=AsyncMock(side_effect=RuntimeError("boom"))
-        ):
+        with patch.object(orch, "_call_llm_async", new=AsyncMock(side_effect=RuntimeError("boom"))):
             with pytest.raises(OrchestrationError):
                 await orch.async_execute(task)
 
@@ -236,6 +252,7 @@ async def test_should_not_call_post_hook_on_failure():
 
 
 # ── _call_llm_async: aifw.completion() is called ───────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_should_call_aifw_async_completion():
@@ -250,6 +267,7 @@ async def test_should_call_aifw_async_completion():
         return _make_llm_result()
 
     import sys
+
     fake_aifw_service = MagicMock()
     fake_aifw_service.completion = _fake_completion
     fake_aifw = MagicMock()
@@ -286,6 +304,7 @@ async def test_should_pass_quality_level_and_priority_to_async_llm():
 
 
 # ── Parity with execute() ────────────────────────────────────────────────────────────
+
 
 @pytest.mark.asyncio
 async def test_async_and_sync_produce_equivalent_results():

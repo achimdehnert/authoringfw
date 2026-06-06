@@ -6,9 +6,6 @@ from authoringfw.planning import (
     get_planning_config,
     PLANNING_ROMAN,
     PLANNING_ACADEMIC,
-    PLANNING_SCIENTIFIC,
-    PLANNING_NONFICTION,
-    PLANNING_ESSAY,
 )
 from authoringfw.formats.base import get_format
 

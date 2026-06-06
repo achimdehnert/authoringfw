@@ -9,6 +9,7 @@ from authoringfw.research import ResearchOrchestrator, ResearchResult, ResearchT
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
+
 def _make_llm_result(content="Research findings here.", success=True):
     r = MagicMock()
     r.content = content
@@ -30,6 +31,7 @@ def research_task():
 
 
 # ── ResearchTask validation ──────────────────────────────────────────────────
+
 
 def test_should_create_research_task_with_defaults(research_task):
     assert research_task.action_code == "research_query"
@@ -60,6 +62,7 @@ def test_should_accept_all_output_formats():
 
 
 # ── ResearchOrchestrator._build_messages ─────────────────────────────────────
+
 
 def test_should_build_messages_with_system_and_user(research_task):
     orch = ResearchOrchestrator()
@@ -119,6 +122,7 @@ def test_should_not_include_context_section_when_empty(research_task):
 
 # ── ResearchOrchestrator._map_result ─────────────────────────────────────────
 
+
 def test_should_map_result_to_research_result(research_task):
     orch = ResearchOrchestrator()
     llm = _make_llm_result("## Burgtore\nSchwere Holztore...")
@@ -141,6 +145,7 @@ def test_should_return_empty_content_on_failure(research_task):
 
 # ── ResearchOrchestrator full execute ──────────────────────────────────────────
 
+
 def test_should_execute_and_return_research_result(research_task):
     orch = ResearchOrchestrator()
     llm = _make_llm_result("## Architektur\nBurgen hatten Zugbrücken...")
@@ -157,6 +162,7 @@ def test_should_execute_and_return_research_result(research_task):
 
 # ── Pipeline: Research → Chapter (ADR-096 §4.5) ──────────────────────────────
 
+
 def test_should_inject_structured_findings_into_chapter_task():
     from authoringfw.writing import ChapterOrchestrator, ChapterTask
 
@@ -165,9 +171,11 @@ def test_should_inject_structured_findings_into_chapter_task():
 
     with patch.object(research_orch, "_get_action_config", return_value={}):
         with patch.object(research_orch, "_call_llm", return_value=research_llm):
-            research_result = research_orch.execute(ResearchTask(
-                topic="Mittelalterliche Burgtore",
-            ))
+            research_result = research_orch.execute(
+                ResearchTask(
+                    topic="Mittelalterliche Burgtore",
+                )
+            )
 
     chapter_task = ChapterTask(
         chapter_title="Das Tor der Burg",

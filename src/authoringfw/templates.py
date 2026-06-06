@@ -87,9 +87,7 @@ def render_story_template(
                 merged[str(v)] = ""
         merged.update(variables)
 
-        var_names = [
-            v.name if isinstance(v, PromptVariable) else str(v) for v in spec.variables
-        ]
+        var_names = [v.name if isinstance(v, PromptVariable) else str(v) for v in spec.variables]
         sys_tmpl = PromptTemplate(
             id=f"{spec.template_key}.system",
             layer=TemplateLayer.SYSTEM,
@@ -258,9 +256,7 @@ Das Kapitel muss eigenständig lesbar sein und darf NICHT abgekürzt werden.""",
         ),
         PromptVariable(name="act", var_type=VariableType.STRING, required=False, default=""),
         PromptVariable(name="summary", var_type=VariableType.STRING, required=False, default=""),
-        PromptVariable(
-            name="key_events", var_type=VariableType.STRING, required=False, default=""
-        ),
+        PromptVariable(name="key_events", var_type=VariableType.STRING, required=False, default=""),
         PromptVariable(
             name="previous_summary",
             var_type=VariableType.STRING,
@@ -666,6 +662,7 @@ TRANSPORTE (verwende diese exakten transport_id-Werte):
 # =============================================================================
 # Auto-register on import
 # =============================================================================
+
 
 def register_templates():
     """Register all story templates in the registry."""

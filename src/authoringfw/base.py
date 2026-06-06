@@ -77,7 +77,7 @@ class BaseContentOrchestrator(ABC):
         if not getattr(cls, "action_code", ""):
             raise TypeError(
                 f"{cls.__name__} must define class variable 'action_code' (non-empty str). "
-                "Example: action_code = \"chapter_writing\""
+                'Example: action_code = "chapter_writing"'
             )
 
     # ── Sync execution ─────────────────────────────────────────────────────
@@ -243,8 +243,7 @@ class BaseContentOrchestrator(ABC):
             from aifw.service import get_action_config  # type: ignore[import]
         except ImportError as exc:
             raise ConfigurationError(
-                "aifw is required for BaseContentOrchestrator. "
-                "Install with: pip install iil-aifw",
+                "aifw is required for BaseContentOrchestrator. Install with: pip install iil-aifw",
                 action_code=self.action_code,
             ) from exc
 
@@ -284,8 +283,7 @@ class BaseContentOrchestrator(ABC):
             from aifw.service import sync_completion  # type: ignore[import]
         except ImportError as exc:
             raise ConfigurationError(
-                "aifw is required for BaseContentOrchestrator. "
-                "Install with: pip install iil-aifw",
+                "aifw is required for BaseContentOrchestrator. Install with: pip install iil-aifw",
                 action_code=self.action_code,
             ) from exc
 
@@ -315,8 +313,7 @@ class BaseContentOrchestrator(ABC):
             from aifw.service import completion as aifw_async_completion  # type: ignore[import]
         except ImportError as exc:
             raise ConfigurationError(
-                "aifw is required for BaseContentOrchestrator. "
-                "Install with: pip install iil-aifw",
+                "aifw is required for BaseContentOrchestrator. Install with: pip install iil-aifw",
                 action_code=self.action_code,
             ) from exc
 

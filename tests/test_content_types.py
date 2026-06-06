@@ -8,6 +8,7 @@ Verifies:
   - lru_cache returns same instance on repeated calls
   - StyleProfile and chunk_vocab are correctly populated
 """
+
 import pytest
 
 from authoringfw.content_types import (
@@ -19,13 +20,17 @@ from authoringfw.schema.style import StyleProfile
 
 
 EXPECTED_CONTENT_TYPES = [
-    "academic", "essay", "nonfiction", "novel",
-    "scientific", "screenplay", "short_story",
+    "academic",
+    "essay",
+    "nonfiction",
+    "novel",
+    "scientific",
+    "screenplay",
+    "short_story",
 ]
 
 
 class TestListContentTypes:
-
     def test_should_return_all_bundled_content_types(self):
         result = list_content_types()
         assert result == EXPECTED_CONTENT_TYPES
@@ -36,7 +41,6 @@ class TestListContentTypes:
 
 
 class TestGetContentTypeConfig:
-
     @pytest.fixture(autouse=True)
     def _clear_cache(self):
         get_content_type_config.cache_clear()
@@ -82,7 +86,6 @@ class TestGetContentTypeConfig:
 
 
 class TestContentTypeConfigContract:
-
     def test_should_be_frozen_dataclass(self):
         cfg = get_content_type_config("novel")
         with pytest.raises(AttributeError):
@@ -97,7 +100,6 @@ class TestContentTypeConfigContract:
 
 
 class TestAcademicSpecificConfig:
-
     def test_should_have_academic_tone(self):
         cfg = get_content_type_config("academic")
         assert cfg.style_profile.tone == "academic"
@@ -112,7 +114,6 @@ class TestAcademicSpecificConfig:
 
 
 class TestNovelSpecificConfig:
-
     def test_should_have_literary_tone(self):
         cfg = get_content_type_config("novel")
         assert cfg.style_profile.tone == "literary"

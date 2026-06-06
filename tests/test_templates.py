@@ -1,7 +1,5 @@
 """Tests for authoringfw.templates — story prompt templates (Issue #13)."""
 
-import pytest
-
 from authoringfw.templates import (
     CHAPTER_TEMPLATE,
     InMemoryRegistry,
@@ -121,6 +119,7 @@ class TestTopLevelImport:
             STORYLINE_TEMPLATE as ST,
             render_story_template,
         )
+
         assert OT.template_key == "story.outline.v1"
         assert CT.template_key == "story.chapter.v2"
         assert SOT.template_key == "story.scene_outline.v1"

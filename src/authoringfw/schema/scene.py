@@ -51,9 +51,7 @@ class SceneProfile(BaseModel):
         try:
             import yaml
         except ImportError as e:
-            raise ImportError(
-                "pyyaml is required. Install with: pip install pyyaml"
-            ) from e
+            raise ImportError("pyyaml is required. Install with: pip install pyyaml") from e
         return yaml.dump(self.model_dump(), allow_unicode=True, default_flow_style=False)
 
     @classmethod
@@ -62,8 +60,6 @@ class SceneProfile(BaseModel):
         try:
             import yaml
         except ImportError as e:
-            raise ImportError(
-                "pyyaml is required. Install with: pip install pyyaml"
-            ) from e
+            raise ImportError("pyyaml is required. Install with: pip install pyyaml") from e
         data = yaml.safe_load(yaml_str)
         return cls(**data)

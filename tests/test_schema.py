@@ -1,12 +1,11 @@
 """Tests for authoringfw schema models."""
 
 import pytest
-from pydantic import ValidationError
 
 from authoringfw.schema.style import StyleProfile
 from authoringfw.schema.character import CharacterProfile
-from authoringfw.schema.world import WorldContext, Location
-from authoringfw.schema.versioning import VersionMetadata, ChangeType, PhaseSnapshot
+from authoringfw.schema.world import WorldContext
+from authoringfw.schema.versioning import VersionMetadata, ChangeType
 from authoringfw.formats.base import FormatProfile, WorkflowPhase, get_format
 
 
@@ -86,6 +85,7 @@ def test_workflow_phase_values():
 
 def test_format_profile_steps_for_phase():
     from authoringfw.formats.base import StepConfig
+
     f = FormatProfile(
         format_type="test",
         display_name="Test",
