@@ -1,6 +1,6 @@
 [project]
 name = "iil-authoringfw"
-version = "0.11.1"
+version = "0.11.2"
 description = "Authoring Framework — domain schemas and orchestration base for AI-assisted creative writing"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -27,7 +27,7 @@ dependencies = [
 
 [project.optional-dependencies]
 aifw = [
-    "iil-aifw>=0.6.1",
+    "iil-aifw>=0.11.2",  # quality_level/priority routing only works from 0.11.2 (was silently ignored before)
 ]
 yaml = [
     "pyyaml>=6.0",
@@ -37,7 +37,7 @@ promptfw = [
 ]
 all = [
     "pyyaml>=6.0",
-    "iil-aifw>=0.6.1",
+    "iil-aifw>=0.11.2",  # quality_level/priority routing only works from 0.11.2 (was silently ignored before)
     "iil-promptfw>=0.5.5",
 ]
 dev = [
