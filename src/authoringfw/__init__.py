@@ -16,9 +16,30 @@ New in 0.5.0: research/ sub-domain — ResearchOrchestrator.
 New in 0.6.2: text/ sub-domain — TextReformatter, ReformatTask, ReformatResult.
               Generic post-hoc text transformation (no domain coupling).
               Usable from iil-researchfw, bfagent, or any consumer.
+
+Public submodule map (the broad multi-module public API; see CLAUDE.md):
+  authoringfw.base / .types   — BaseContentOrchestrator, ContentTask / ContentResult
+  authoringfw.exceptions      — AuthoringFWError hierarchy
+  authoringfw.schema.*        — domain models (story, character, scene, style,
+                                world, versioning)
+  authoringfw.adapters        — runtime-checkable adapter Protocols (I*Adapter)
+  authoringfw.writing         — Chapter / Summary orchestrators + chunking helpers
+  authoringfw.research        — ResearchOrchestrator
+  authoringfw.analysis        — Style / Plot analysis orchestrators
+  authoringfw.text            — TextReformatter (domain-agnostic transforms)
+  authoringfw.formats         — FormatProfile / WorkflowPhase / get_format
+  authoringfw.planning        — planning field configuration
+  authoringfw.consistency     — ConsistencyChecker + report types
+  authoringfw.content_types   — data-driven content-type configuration
+  authoringfw.templates       — story prompt templates + registry
 """
 
-__version__ = "0.11.0"
+from importlib.metadata import PackageNotFoundError, version as _pkg_version
+
+try:
+    __version__ = _pkg_version("iil-authoringfw")
+except PackageNotFoundError:  # pragma: no cover - source checkout without install
+    __version__ = "0.0.0.dev0"
 
 from authoringfw.analysis import (
     AnalysisResult,
