@@ -20,7 +20,7 @@ pip install "iil-authoringfw[all]"
 
 | Extra | Dependencies | Purpose |
 |---|---|---|
-| `aifw` | iil-aifw>=0.6.1 | LLM completion integration |
+| `aifw` | iil-aifw>=0.11.4 | LLM completion integration (quality_level/priority routing needs >=0.11.2) |
 | `yaml` | pyyaml>=6.0 | YAML template loading |
 | `promptfw` | iil-promptfw>=0.5.5 | Prompt template rendering |
 | `all` | all above | Full feature set |
@@ -66,7 +66,9 @@ print(roman.style_constraints)
 
 ## Format Profiles
 
-Built-in formats: `roman`, `essay`, `serie`, `scientific`
+Built-in formats: `roman` (alias `novel`), `essay`, `serie`, `scientific`,
+`nonfiction`, `academic`, `screenplay`, `short_story`, `blog_post`, `podcast_script`.
+The registry (`authoringfw.formats.base.FORMAT_REGISTRY`) is the source of truth.
 
 ```python
 from authoringfw.formats.base import get_format, WorkflowPhase
