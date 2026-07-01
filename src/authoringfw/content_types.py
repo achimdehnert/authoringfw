@@ -92,7 +92,7 @@ def get_content_type_config(content_type: str) -> ContentTypeConfig:
             chunk_vocab=dict(_DEFAULT_CHUNK_VOCAB),
         )
 
-    data: dict[str, Any] = yaml.safe_load(yaml_path.read_text(encoding="utf-8"))
+    data: dict[str, Any] = yaml.safe_load(yaml_path.read_text(encoding="utf-8")) or {}
 
     style_data = data.get("style", {})
     style = StyleProfile(**{k: v for k, v in style_data.items() if k in StyleProfile.model_fields})

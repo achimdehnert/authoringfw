@@ -26,6 +26,7 @@ target_word_count and the configured token budget.
 from __future__ import annotations
 
 import logging
+import math
 
 from authoringfw.exceptions import ConfigurationError, OrchestrationError
 from authoringfw.types import ContentResult, ContentTask
@@ -110,7 +111,8 @@ class ChunkedChapterOrchestrator(ChapterOrchestrator):
         words_per_chunk: int,
     ) -> ChapterResult:
         """Write a chapter in multiple chunks, concatenating results."""
-        num_chunks = (task.target_word_count // words_per_chunk) + 1
+        # ceil division: an exact multiple must not over-generate an extra chunk
+        num_chunks = max(1, math.ceil(task.target_word_count / words_per_chunk))
 
         logger.info(
             "Chunked generation: %d words in %d chunks of ~%d words",

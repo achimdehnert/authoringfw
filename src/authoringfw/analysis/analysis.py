@@ -183,5 +183,5 @@ class PlotAnalysisOrchestrator(BaseContentOrchestrator):
             latency_ms=getattr(llm_result, "latency_ms", 0),
             success=getattr(llm_result, "success", True),
             metadata=task.metadata if isinstance(task, AnalysisTask) else {},
-            findings=findings[:10],
+            findings=findings,
         )

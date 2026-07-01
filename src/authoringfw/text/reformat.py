@@ -164,13 +164,7 @@ class TextReformatter:
                 f"Unknown target_format {target_format!r}. "
                 f"Available: {list(_FORMAT_INSTRUCTIONS) + list(self._registry)}"
             )
-        lang_suffix = (
-            " Schreibe auf Deutsch."
-            if language == "de"
-            else f" Write in {language}."
-            if language != "de"
-            else ""
-        )
+        lang_suffix = " Schreibe auf Deutsch." if language == "de" else f" Write in {language}."
         return base + lang_suffix
 
     def _build_prompt(self, task: ReformatTask) -> str:
@@ -238,7 +232,7 @@ class TextReformatter:
 
     async def areformat(self, task: ReformatTask) -> ReformatResult:
         """Async wrapper — runs sync reformat in executor."""
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, self.reformat, task)
 
 

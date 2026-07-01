@@ -76,5 +76,5 @@ class WorldContext(BaseModel):
             import yaml
         except ImportError as e:
             raise ImportError("pyyaml is required. Install with: pip install pyyaml") from e
-        data = yaml.safe_load(yaml_str)
+        data = yaml.safe_load(yaml_str) or {}
         return cls(**data)

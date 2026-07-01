@@ -180,6 +180,40 @@ def test_chunked_accumulates_tokens_and_latency():
     assert result.latency_ms >= 1000
 
 
+def test_should_not_overshoot_chunks_when_target_is_exact_multiple():
+    """Exact multiple of words_per_chunk must not generate an extra chunk (ceil, not //+1)."""
+    orch = ChunkedChapterOrchestrator(model_max_tokens=4096)
+    words_per_chunk = compute_words_per_chunk(4096)  # 2530
+    task = ChapterTask(
+        chapter_title="Exact",
+        chapter_outline="Scene.",
+        target_word_count=words_per_chunk * 4,  # exact multiple → expect exactly 4 chunks
+    )
+
+    call_count = 0
+
+    def mock_execute(t):
+        nonlocal call_count
+        call_count += 1
+        return ChapterResult(
+            content="chunk",
+            action_code="chapter_writing",
+            model="gpt-4o",
+            input_tokens=1,
+            output_tokens=1,
+            latency_ms=1,
+            success=True,
+            chapter_title="Exact",
+            estimated_word_count=1,
+        )
+
+    with patch.object(ChapterOrchestrator, "execute", side_effect=mock_execute):
+        orch.execute(task)
+
+    # ceil(4*wpc / wpc) == 4; the old (target // wpc) + 1 formula over-generated 5.
+    assert call_count == 4
+
+
 # ── Graceful degradation ──────────────────────────────────────────────────────
 
 
