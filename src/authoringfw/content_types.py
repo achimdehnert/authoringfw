@@ -68,12 +68,13 @@ def list_content_types() -> list[str]:
 
 
 @lru_cache(maxsize=16)
-def get_content_type_config(content_type: str) -> ContentTypeConfig:
+def _load_content_type_config(content_type: str) -> ContentTypeConfig:
     """
-    Load ContentTypeConfig for a content_type from bundled YAML.
+    Parse and cache the ContentTypeConfig for a content_type from bundled YAML.
 
-    Falls back to 'novel' defaults if the content_type is unknown.
-    Results are cached per content_type.
+    Internal. The returned instance is shared across callers, so it must NOT be
+    handed out directly — ``get_content_type_config()`` returns an independent
+    copy to prevent cache poisoning via the mutable ``StyleProfile`` / ``chunk_vocab``.
     """
     d = _data_dir()
     yaml_path = d / f"{content_type}.yaml"
@@ -104,3 +105,27 @@ def get_content_type_config(content_type: str) -> ContentTypeConfig:
         style_profile=style,
         chunk_vocab=vocab,
     )
+
+
+def get_content_type_config(content_type: str) -> ContentTypeConfig:
+    """
+    Load ContentTypeConfig for a content_type from bundled YAML.
+
+    Falls back to 'novel' defaults if the content_type is unknown. The YAML parse
+    is cached per content_type, but each call returns an independent (deep-copied)
+    config: the wrapped ``StyleProfile`` and ``chunk_vocab`` are mutable, so handing
+    out the shared cached instance would let one caller's mutation poison every
+    other caller. Copying keeps the cache immutable in practice.
+    """
+    cached = _load_content_type_config(content_type)
+    return ContentTypeConfig(
+        name=cached.name,
+        style_profile=cached.style_profile.model_copy(deep=True),
+        chunk_vocab=dict(cached.chunk_vocab),
+    )
+
+
+# Preserve the lru_cache management API on the public entry point (callers/tests
+# use get_content_type_config.cache_clear()).
+get_content_type_config.cache_clear = _load_content_type_config.cache_clear  # type: ignore[attr-defined]
+get_content_type_config.cache_info = _load_content_type_config.cache_info  # type: ignore[attr-defined]
