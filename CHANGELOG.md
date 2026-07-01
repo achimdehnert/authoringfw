@@ -5,11 +5,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [Unreleased]
+## [0.11.5] — 2026-07-01
 
-> Accumulated changes on top of the last published release (`0.11.1` on PyPI).
-> `pyproject.toml` is at `0.11.2` but that version has not been tagged/published yet —
-> cut a release by renaming this section to the chosen version + date and tagging it.
+> First published release since `0.11.1`. Supersedes the never-published `0.11.2`
+> (its dependency-floor change is included below).
 
 ### Changed
 - Dependency floor **`iil-aifw>=0.11.2` → `>=0.11.4`** in the `aifw` and `all` extras (#7).
@@ -40,8 +39,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - **Dependency floor `iil-aifw>=0.6.1` → `>=0.11.2`** (in both the `aifw` and `all` extras). authoringfw passes `quality_level`/`priority` into `aifw.sync_completion()`/`completion()`, but aifw silently ignored those parameters until 0.11.2 (it routed every call to the catch-all `AIActionType` row). From 0.11.2 the routing cascade is actually applied, so authoringfw's quality-tier routing works for the first time. Pinning the floor guarantees the feature is present rather than a silent no-op.
 
-> **Note:** `0.11.2` is the version in `pyproject.toml` but has not been tagged or
-> published to PyPI. The latest published release is `0.11.1`.
+> **Note:** `0.11.2` was never tagged or published to PyPI; its dependency-floor
+> change shipped in `0.11.5`.
 
 ## [0.11.1] — 2026-06-06
 
