@@ -154,12 +154,10 @@ async def test_should_not_wrap_configuration_error_as_orchestration_error_async(
         with patch.object(
             orch, "_call_llm_async", new=AsyncMock(side_effect=ConfigurationError("no model"))
         ):
-            try:
+            # Must propagate ConfigurationError. pytest.raises fails on both
+            # "did not raise" and "raised OrchestrationError (wrongly wrapped)".
+            with pytest.raises(ConfigurationError):
                 await orch.async_execute(task)
-            except OrchestrationError:
-                pytest.fail("ConfigurationError was wrongly wrapped as OrchestrationError")
-            except ConfigurationError:
-                pass  # expected
 
 
 @pytest.mark.asyncio
@@ -281,6 +279,10 @@ async def test_should_call_aifw_async_completion():
         )
 
     assert result is not None
+    # Verify the delegation contract, not just that something came back.
+    assert captured["messages"] == [{"role": "user", "content": "x"}]
+    assert captured["quality_level"] == 6
+    assert captured["priority"] == "balanced"
 
 
 @pytest.mark.asyncio
