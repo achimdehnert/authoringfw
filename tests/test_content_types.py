@@ -76,7 +76,26 @@ class TestGetContentTypeConfig:
     def test_should_cache_repeated_calls(self):
         cfg1 = get_content_type_config("academic")
         cfg2 = get_content_type_config("academic")
-        assert cfg1 is cfg2
+        # Same content and the YAML parse is cached (second call is a hit)...
+        assert cfg1 == cfg2
+        assert get_content_type_config.cache_info().hits >= 1
+        # ...but callers get independent objects (no shared mutable state).
+        assert cfg1 is not cfg2
+        assert cfg1.style_profile is not cfg2.style_profile
+
+    def test_should_not_leak_mutations_across_calls(self):
+        """Mutating a returned config must not poison the cache (A1)."""
+        cfg1 = get_content_type_config("academic")
+        original_tone = cfg1.style_profile.tone
+        original_opening = cfg1.chunk_vocab["opening"]
+
+        # Poison attempt on the returned (mutable) config.
+        cfg1.style_profile.tone = "POISONED"
+        cfg1.chunk_vocab["opening"] = "POISONED"
+
+        cfg2 = get_content_type_config("academic")
+        assert cfg2.style_profile.tone == original_tone
+        assert cfg2.chunk_vocab["opening"] == original_opening
 
     def test_should_not_cache_different_types(self):
         cfg_novel = get_content_type_config("novel")
