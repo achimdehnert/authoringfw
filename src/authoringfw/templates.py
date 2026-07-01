@@ -82,7 +82,7 @@ def render_story_template(
         merged: dict[str, Any] = {}
         for v in spec.variables:
             if isinstance(v, PromptVariable):
-                merged[v.name] = v.default if v.default != "" else ""
+                merged[v.name] = v.default
             else:
                 merged[str(v)] = ""
         merged.update(variables)

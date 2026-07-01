@@ -187,7 +187,7 @@ class ConsistencyChecker:
                 llm_completion_fn = aifw_completion
             except ImportError as e:
                 raise ImportError(
-                    "aifw is required for check_with_llm(). Install with: pip install aifw"
+                    "iil-aifw is required for check_with_llm(). Install with: pip install iil-aifw"
                 ) from e
 
         import json

@@ -50,7 +50,7 @@ class StyleProfile(BaseModel):
             import yaml
         except ImportError as e:
             raise ImportError("pyyaml is required. Install with: pip install pyyaml") from e
-        data = yaml.safe_load(yaml_str)
+        data = yaml.safe_load(yaml_str) or {}
         return cls(**data)
 
     @classmethod
@@ -97,7 +97,7 @@ class StyleProfile(BaseModel):
                 llm_completion_fn = aifw_completion
             except ImportError as e:
                 raise ImportError(
-                    "aifw is required for StyleProfile.from_text(). Install with: pip install aifw"
+                    "iil-aifw is required for StyleProfile.from_text(). Install with: pip install iil-aifw"
                 ) from e
 
         result = await llm_completion_fn(action_code, messages)
