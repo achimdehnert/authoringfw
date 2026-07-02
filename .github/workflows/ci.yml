@@ -35,18 +35,33 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install package + dev deps
+      - name: Install package + all extras + dev deps
+        # `.[all]` pulls iil-aifw + iil-promptfw so the importorskip'd
+        # integration tests actually RUN (and their code gets measured),
+        # instead of silently skipping under a dev-only install.
         run: |
           pip install --upgrade pip
-          pip install -e ".[dev]"
-      - name: Run tests with coverage
-        run: pytest tests/ -v --tb=short --cov --cov-report=term-missing
-      - name: Coverage gate (≥80%)
+          pip install -e ".[all,dev]"
+      - name: Collection guard (>=80 tests, no silent test loss)
+        # Merged in from the former standalone test.yml workflow.
         run: |
-          COV=$(pytest tests/ --cov --cov-report=term 2>/dev/null | grep "^TOTAL" | awk '{print $NF}' | tr -d '%')
-          echo "Coverage: ${COV}%"
-          if [ -n "$COV" ] && [ "$COV" -lt 80 ]; then
-            echo "::error::Coverage ${COV}% is below 80% threshold"
+          COUNT=$(pytest tests/ --collect-only -q 2>/dev/null | tail -1 | grep -oE '[0-9]+ (test|item)' | head -1 | grep -oE '[0-9]+')
+          echo "Collected $COUNT tests"
+          if [ -z "$COUNT" ] || [ "$COUNT" -lt 80 ]; then
+            echo "::error::Expected >= 80 tests, got '$COUNT'. Possible test files missing."
+            exit 1
+          fi
+      - name: Run tests + coverage (single scoped run, native fail-under)
+        # ONE pytest run: coverage source + fail_under come from pyproject
+        # ([tool.coverage.*]); no fragile grep-of-TOTAL gate, no duplicate run.
+        # With all extras installed we expect 0 skips — assert it so an
+        # importorskip test can never hide behind a missing dependency.
+        run: |
+          set -o pipefail
+          pytest tests/ -v --tb=short --cov --cov-report=term-missing | tee pytest.out
+          if grep -qE '[1-9][0-9]* skipped' pytest.out; then
+            echo "::error::Unexpected skipped test(s) — all extras are installed, so 0 skips are expected:"
+            grep -E 'SKIPPED|[0-9]+ skipped' pytest.out || true
             exit 1
           fi
 

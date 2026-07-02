@@ -69,6 +69,18 @@ pythonpath = ["src"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 
+# Coverage is scoped to the package source only (NOT tests/).
+# Before this scope was set, bare `--cov` measured tests/ + src together and
+# reported an inflated ~85%. The honest, source-scoped number is ~72%.
+# fail_under is a no-regression floor at the real current level; the target is
+# 80% — raise this gate as coverage improves (do not lower it).
+[tool.coverage.run]
+source = ["authoringfw"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 70
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"
