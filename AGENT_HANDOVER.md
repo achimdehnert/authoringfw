@@ -3,7 +3,7 @@
 Living current-state / next-priorities handover for the next agent or contributor.
 `NEXT.md` is an auto-generated cache, not the source of truth — this file is.
 
-## Current state (observed)
+## Current state (observed 2026-06-22)
 
 - Library package: dist `iil-authoringfw`, import `authoringfw`. `requires-python >= 3.12`.
 - In-repo version `0.11.2` (`pyproject.toml`); root `__init__.py` resolves
