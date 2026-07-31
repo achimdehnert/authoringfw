@@ -45,13 +45,42 @@ DEFAULT_MODEL_MAX_TOKENS = 4096
 CONTINUATION_CONTEXT_CHARS = 3000
 
 
-def compute_max_tokens(target_words: int) -> int:
+def compute_max_tokens(target_words: int, reasoning_overhead: float = 0.0) -> int:
     """Compute dynamic max_tokens from target word count.
 
-    Formula: max(MIN_MAX_TOKENS, target_words * 2)
+    Formula: ``max(MIN_MAX_TOKENS, target_words * 2) * (1 + reasoning_overhead)``
     The 2x factor accounts for ~1.5 tokens/word + formatting overhead.
+
+    ``reasoning_overhead`` budgets for models that emit *thinking* tokens from the
+    **same** completion allowance as their prose (Groq/qwen3.x, DeepSeek-R1 and
+    relatives). Without it the formula budgets prose only — and such a model can
+    exhaust the entire allowance before writing a single character.
+
+    Measured 2026-07-31 in writing-hub: chapters targeting 1300–1900 words failed
+    with ``finish_reason=length`` at exactly 4000 output tokens and **empty**
+    content, six times in a row. The thinking alone consumed the whole budget the
+    formula had reserved for the text.
+
+    The value is the *caller's* decision, not this function's: how much a model
+    thinks depends on the model and on the size of the prompt it is handed. The
+    default 0.0 keeps every existing caller byte-identical — an unused headroom
+    costs nothing (``max_tokens`` is a ceiling, not a spend), but guessing one
+    here would change behaviour for callers who never asked for it.
+
+    Args:
+        target_words: intended length of the generated text.
+        reasoning_overhead: extra allowance as a fraction of the prose budget.
+            ``0.0`` = prose only (default), ``3.0`` = four times the prose budget.
+
+    Raises:
+        ValueError: if ``reasoning_overhead`` is negative. A smaller-than-prose
+            budget is never intended, and it would fail far from here — with a
+            message about a truncated completion rather than about this argument.
     """
-    return max(MIN_MAX_TOKENS, int(target_words * 2))
+    if reasoning_overhead < 0:
+        raise ValueError(f"reasoning_overhead must be >= 0, got {reasoning_overhead}")
+    prose_tokens = max(MIN_MAX_TOKENS, int(target_words * 2))
+    return int(prose_tokens * (1.0 + reasoning_overhead))
 
 
 def compute_words_per_chunk(max_tokens: int) -> int:

@@ -2,6 +2,8 @@
 
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from authoringfw.writing import (
     ChapterOrchestrator,
     ChapterTask,
@@ -39,6 +41,33 @@ def test_compute_max_tokens_scales_with_words():
     """Large chapters scale: target_words * 2."""
     assert compute_max_tokens(5000) == 10000
     assert compute_max_tokens(10000) == 20000
+
+
+def test_compute_max_tokens_defaults_to_prose_only():
+    """The default must stay byte-identical — every existing caller passes no overhead."""
+    assert compute_max_tokens(1000, reasoning_overhead=0.0) == compute_max_tokens(1000)
+    assert compute_max_tokens(5000, reasoning_overhead=0.0) == compute_max_tokens(5000)
+
+
+def test_compute_max_tokens_adds_reasoning_headroom():
+    """A reasoning model spends its thinking from the same allowance as the prose.
+
+    Measured 2026-07-31: a 1300-word chapter died at exactly 4000 output tokens with
+    empty content — the thinking alone consumed the whole prose budget.
+    """
+    assert compute_max_tokens(1300, reasoning_overhead=1.0) == 8000
+    assert compute_max_tokens(1300, reasoning_overhead=3.0) == 16000
+
+
+def test_compute_max_tokens_applies_overhead_above_the_floor_too():
+    """The overhead multiplies the *computed* budget, not just the minimum."""
+    assert compute_max_tokens(5000, reasoning_overhead=1.0) == 20000
+
+
+def test_compute_max_tokens_rejects_a_negative_overhead():
+    """A budget below the prose need is never intended — fail here, not at the API."""
+    with pytest.raises(ValueError, match="reasoning_overhead"):
+        compute_max_tokens(1300, reasoning_overhead=-0.5)
 
 
 def test_compute_words_per_chunk():
