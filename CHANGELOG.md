@@ -5,6 +5,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.11.6] — 2026-07-31
+
+### Added
+- **`compute_max_tokens(target_words, reasoning_overhead=0.0)`** — optionaler Zuschlag
+  fuer Modelle, die ihr *Denken* aus DEMSELBEN Completion-Kontingent bestreiten wie
+  ihre Prosa (Groq/qwen3.x, DeepSeek-R1 und Verwandte). Die Formel budgetierte bisher
+  nur Prosa (`max(MIN_MAX_TOKENS, target_words * 2)`); ein solches Modell kann das
+  ganze Budget aufbrauchen, bevor ein Zeichen Text entsteht.
+
+  Gemessen 2026-07-31 in writing-hub: Kapitel mit Ziel 1300-1900 Woertern scheiterten
+  sechsmal in Folge mit `finish_reason=length` bei exakt 4000 Output-Tokens und
+  LEEREM Inhalt.
+
+  **Rueckwaertskompatibel:** Der Default `0.0` laesst jeden bestehenden Aufrufer
+  byte-identisch. Der Wert bleibt bewusst Sache des Aufrufers — wie viel ein Modell
+  denkt, haengt vom Modell und von der Groesse des Prompts ab.
+
+  Ein negativer Wert wirft `ValueError`: ein Budget unter dem Prosa-Bedarf ist nie
+  gewollt und wuerde sonst weit entfernt scheitern, mit einer Meldung ueber eine
+  abgeschnittene Completion statt ueber das Argument.
+
+---
+
 ## [0.11.5] — 2026-07-01
 
 > First published release since `0.11.1`. Supersedes the never-published `0.11.2`
